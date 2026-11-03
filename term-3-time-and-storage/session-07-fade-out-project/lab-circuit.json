@@ -1,0 +1,389 @@
+{
+  "key": "term-3-time-and-storage/session-07-fade-out-project",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: slider zaman-e andazegiri ra migooyad; bad az an barname tamam mishavad\n# ta adad-e multimeter sabet bemanad.\nfrom machine import Pin, ADC\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nsteps = round(knob.read() * 300 / 4095)\ntime.sleep(steps * 0.01)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 300,
+        "initial": 100,
+        "label": "زمان اندازه‌گیری (ضرب‌در ۰٫۰۱ ثانیه)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 12,
+        "label": "R2 (ضرب‌در ۱۰ اهم)"
+      },
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "C2 موازی با C1 (۰ قطع، ۱ وصل)"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 100,
+        "label": "R1",
+        "link": "R1"
+      },
+      {
+        "type": "passive",
+        "passive": "capacitor",
+        "label": "C1 = ۴۷۰µF",
+        "link": "C1"
+      },
+      {
+        "type": "passive",
+        "passive": "capacitor",
+        "label": "C2 = ۱۰۰۰µF",
+        "link": "C2"
+      },
+      {
+        "type": "led",
+        "pin": 99,
+        "color": "red",
+        "label": "LED"
+      }
+    ],
+    "analog": {
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 300
+        },
+        {
+          "id": "R2",
+          "pin": 35,
+          "analogMax": 100
+        },
+        {
+          "id": "SW1",
+          "pin": 32,
+          "analogMax": 1
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "capacitor",
+          "id": "C1",
+          "a": "top",
+          "b": "GND",
+          "farads": 0.00047,
+          "v0": 3.3
+        },
+        {
+          "kind": "pot",
+          "id": "SW1",
+          "a": "top",
+          "wiper": "y",
+          "b": "nc1",
+          "rtotal": 10000000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "capacitor",
+          "id": "C2",
+          "a": "y",
+          "b": "GND",
+          "farads": 0.001,
+          "v0": 3.3
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "top",
+          "b": "x",
+          "ohms": 100
+        },
+        {
+          "kind": "pot",
+          "id": "R2",
+          "a": "nc2",
+          "wiper": "a",
+          "b": "x",
+          "rtotal": 1000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "led",
+          "id": "LED1",
+          "anode": "a",
+          "cathode": "GND",
+          "pin": 99
+        }
+      ]
+    }
+  },
+  "scenarios": [],
+  "trace": [
+    {
+      "name": "t0 r12 p0",
+      "sliders": {
+        "32": 0,
+        "34": 0,
+        "35": 12
+      },
+      "expect": {
+        "i:LED1": 0.005923,
+        "v:a": 1.997
+      }
+    },
+    {
+      "name": "t10 r12 p0",
+      "sliders": {
+        "32": 0,
+        "34": 10,
+        "35": 12
+      },
+      "expect": {}
+    },
+    {
+      "name": "t20 r12 p0",
+      "sliders": {
+        "32": 0,
+        "34": 20,
+        "35": 12
+      },
+      "expect": {
+        "i:LED1": 0.00105
+      }
+    },
+    {
+      "name": "t50 r12 p0",
+      "sliders": {
+        "32": 0,
+        "34": 50,
+        "35": 12
+      },
+      "expect": {
+        "i:LED1": 0.000178
+      }
+    },
+    {
+      "name": "t100 r12 p0",
+      "sliders": {
+        "32": 0,
+        "34": 100,
+        "35": 12
+      },
+      "expect": {}
+    },
+    {
+      "name": "t150 r12 p0",
+      "sliders": {
+        "32": 0,
+        "34": 150,
+        "35": 12
+      },
+      "expect": {}
+    },
+    {
+      "name": "t200 r12 p0",
+      "sliders": {
+        "32": 0,
+        "34": 200,
+        "35": 12
+      },
+      "expect": {
+        "i:LED1": 0.000018
+      }
+    },
+    {
+      "name": "t300 r12 p0",
+      "sliders": {
+        "32": 0,
+        "34": 300,
+        "35": 12
+      },
+      "expect": {}
+    },
+    {
+      "name": "t50 r12 p1",
+      "sliders": {
+        "32": 1,
+        "34": 50,
+        "35": 12
+      },
+      "expect": {
+        "i:LED1": 0.001446,
+        "v:top": 2.242,
+        "v:a": 1.924
+      }
+    },
+    {
+      "name": "t100 r12 p1",
+      "sliders": {
+        "32": 1,
+        "34": 100,
+        "35": 12
+      },
+      "expect": {
+        "i:LED1": 0.000453
+      }
+    },
+    {
+      "name": "t150 r12 p1",
+      "sliders": {
+        "32": 1,
+        "34": 150,
+        "35": 12
+      },
+      "expect": {}
+    },
+    {
+      "name": "t200 r12 p1",
+      "sliders": {
+        "32": 1,
+        "34": 200,
+        "35": 12
+      },
+      "expect": {
+        "i:LED1": 0.000109,
+        "v:top": 1.814
+      }
+    },
+    {
+      "name": "t300 r12 p1",
+      "sliders": {
+        "32": 1,
+        "34": 300,
+        "35": 12
+      },
+      "expect": {}
+    },
+    {
+      "name": "t0 r12 p1",
+      "sliders": {
+        "32": 1,
+        "34": 0,
+        "35": 12
+      },
+      "expect": {
+        "i:LED1": 0.005923
+      }
+    },
+    {
+      "name": "t0 r33 p0",
+      "sliders": {
+        "32": 0,
+        "34": 0,
+        "35": 33
+      },
+      "expect": {
+        "i:LED1": 0.003108
+      }
+    },
+    {
+      "name": "t50 r33 p0",
+      "sliders": {
+        "32": 0,
+        "34": 50,
+        "35": 33
+      },
+      "expect": {
+        "i:LED1": 0.000357
+      }
+    },
+    {
+      "name": "t0 r33 p1",
+      "sliders": {
+        "32": 1,
+        "34": 0,
+        "35": 33
+      },
+      "expect": {
+        "i:LED1": 0.003108
+      }
+    },
+    {
+      "name": "t50 r33 p1",
+      "sliders": {
+        "32": 1,
+        "34": 50,
+        "35": 33
+      },
+      "expect": {
+        "i:LED1": 0.001469
+      }
+    },
+    {
+      "name": "t100 r33 p1",
+      "sliders": {
+        "32": 1,
+        "34": 100,
+        "35": 33
+      },
+      "expect": {}
+    },
+    {
+      "name": "t200 r33 p1",
+      "sliders": {
+        "32": 1,
+        "34": 200,
+        "35": 33
+      },
+      "expect": {
+        "i:LED1": 0.000222
+      }
+    },
+    {
+      "name": "t0 r0 p1",
+      "sliders": {
+        "32": 1,
+        "34": 0,
+        "35": 0
+      },
+      "expect": {
+        "i:LED1": 0.012637
+      }
+    },
+    {
+      "name": "t50 r0 p1",
+      "sliders": {
+        "32": 1,
+        "34": 50,
+        "35": 0
+      },
+      "expect": {
+        "i:LED1": 0.000832
+      }
+    },
+    {
+      "name": "t200 r0 p1",
+      "sliders": {
+        "32": 1,
+        "34": 200,
+        "35": 0
+      },
+      "expect": {
+        "i:LED1": 0.000064
+      }
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "key": "term-4-diodes-oneway/session-01-one-way-valve",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: barname-ye khali -- faghat saat-e shabih-saz ra jolo mibarad.\n# dar in fasl kod nemi-nevisim; madar khodash hal mishavad.\nimport time\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 1,
+        "label": "سر A (۰ یعنی GND، ۱ یعنی 3V3)"
+      },
+      {
+        "type": "analog",
+        "pin": 33,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "سر B (۰ یعنی GND، ۱ یعنی 3V3)"
+      }
+    ],
+    "analog": {
+      "pots": [
+        {
+          "id": "SWA",
+          "pin": 32,
+          "analogMax": 1
+        },
+        {
+          "id": "SWB",
+          "pin": 33,
+          "analogMax": 1
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "SWA",
+          "a": "3V3",
+          "wiper": "a",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "pot",
+          "id": "SWB",
+          "a": "3V3",
+          "wiper": "b",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "diode",
+          "id": "D1",
+          "anode": "a",
+          "cathode": "m"
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "m",
+          "b": "b",
+          "ohms": 1000
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "a",
+          "b": "b",
+          "ohms": 1000
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "forward",
+      "sliders": {
+        "32": 1,
+        "33": 0
+      },
+      "expect": {
+        "v:a": 3.3,
+        "v:b": 0,
+        "v:m": 2.62,
+        "i:D1": 0.00262,
+        "i:R1": 0.00262,
+        "i:R2": 0.0033
+      }
+    },
+    {
+      "name": "reverse",
+      "sliders": {
+        "32": 0,
+        "33": 1
+      },
+      "expect": {
+        "v:a": 0,
+        "v:b": 3.3,
+        "v:m": 3.3,
+        "i:D1": 0,
+        "i:R1": 0,
+        "i:R2": -0.0033
+      }
+    },
+    {
+      "name": "both high",
+      "sliders": {
+        "32": 1,
+        "33": 1
+      },
+      "expect": {
+        "v:a": 3.3,
+        "v:b": 3.3,
+        "v:m": 3.3,
+        "i:D1": 0,
+        "i:R1": 0,
+        "i:R2": 0
+      }
+    },
+    {
+      "name": "both low",
+      "sliders": {
+        "32": 0,
+        "33": 0
+      },
+      "expect": {
+        "v:a": 0,
+        "v:b": 0,
+        "v:m": 0,
+        "i:D1": 0,
+        "i:R1": 0,
+        "i:R2": 0
+      }
+    }
+  ]
+}

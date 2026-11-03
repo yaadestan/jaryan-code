@@ -1,0 +1,194 @@
+{
+  "key": "term-1-closed-loop/session-05-ohms-law",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: manba-e voltazh-e ghabel-e tanzim-e azmayeshgah.\n# har gam-e slider 0.1 volt ast; duty * 3.3 / 1023 = tenths / 10 volt.\nfrom machine import Pin, ADC, PWM\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nsupply = PWM(Pin(14), freq=1000)\n\ntenths = round(knob.read() * 33 / 4095)\nsupply.duty(tenths * 31)\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 33,
+        "initial": 10,
+        "label": "ولتاژ منبع (ضرب‌در ۰٫۱ ولت)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 10,
+        "label": "مقاومت (ضرب‌در ۱۰۰ اهم)"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 14,
+          "net": "vs"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 33
+        },
+        {
+          "id": "RV",
+          "pin": 35,
+          "analogMax": 100
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "pot",
+          "id": "RV",
+          "a": "nc",
+          "wiper": "GND",
+          "b": "vs",
+          "rtotal": 10000,
+          "wiperPos": 0.5
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "v5 r10",
+      "sliders": {
+        "34": 5,
+        "35": 10
+      },
+      "bench": true,
+      "expect": {
+        "v:vs": 0.5,
+        "i:RV": 0.0005
+      }
+    },
+    {
+      "name": "v10 r10",
+      "sliders": {
+        "34": 10,
+        "35": 10
+      },
+      "bench": true,
+      "expect": {
+        "v:vs": 1.0,
+        "i:RV": 0.001
+      }
+    },
+    {
+      "name": "v15 r10",
+      "sliders": {
+        "34": 15,
+        "35": 10
+      },
+      "bench": true,
+      "expect": {
+        "v:vs": 1.5,
+        "i:RV": 0.0015
+      }
+    },
+    {
+      "name": "v20 r10",
+      "sliders": {
+        "34": 20,
+        "35": 10
+      },
+      "bench": true,
+      "expect": {
+        "v:vs": 2.0,
+        "i:RV": 0.002
+      }
+    },
+    {
+      "name": "v33 r10",
+      "sliders": {
+        "34": 33,
+        "35": 10
+      },
+      "bench": true,
+      "expect": {
+        "v:vs": 3.3,
+        "i:RV": 0.0033
+      }
+    },
+    {
+      "name": "v33 r20",
+      "sliders": {
+        "34": 33,
+        "35": 20
+      },
+      "bench": true,
+      "expect": {
+        "v:vs": 3.3,
+        "i:RV": 0.00165
+      }
+    },
+    {
+      "name": "v33 r33",
+      "sliders": {
+        "34": 33,
+        "35": 33
+      },
+      "bench": true,
+      "expect": {
+        "v:vs": 3.3,
+        "i:RV": 0.001
+      }
+    },
+    {
+      "name": "v15 r3",
+      "sliders": {
+        "34": 15,
+        "35": 3
+      },
+      "bench": true,
+      "expect": {
+        "v:vs": 1.5,
+        "i:RV": 0.005
+      }
+    }
+  ],
+  "programScenarios": [
+    {
+      "name": "real bench program v20 r10",
+      "sliders": {
+        "34": 20,
+        "35": 10
+      },
+      "last": {
+        "v:vs": 2,
+        "i:RV": 0.002
+      }
+    },
+    {
+      "name": "real bench program v33 r20",
+      "sliders": {
+        "34": 33,
+        "35": 20
+      },
+      "last": {
+        "v:vs": 3.3,
+        "i:RV": 0.00165
+      }
+    }
+  ]
+}

@@ -1,0 +1,192 @@
+{
+  "key": "term-6-sensors-and-code/session-04-digital-input",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# button_led.py\n# dokme rooye GPIO 32 ba pull-up: feshorde yani 0.\nfrom machine import Pin\nimport time\n\nbutton = Pin(32, Pin.IN)\nled = Pin(25, Pin.OUT)\n\nwhile True:\n    state = button.value()\n    print(state)\n    if state == 0:\n        led.on()\n    else:\n        led.off()\n    time.sleep(0.5)\n",
+    "parts": [
+      {
+        "type": "button",
+        "pin": 32,
+        "color": "green",
+        "label": "دکمه"
+      },
+      {
+        "type": "led",
+        "pin": 25,
+        "color": "red",
+        "resistorOhms": 220,
+        "label": "LED"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 200,
+        "initial": 1,
+        "label": "pull-up (ضرب‌در ۱۰ کیلواهم)"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 25,
+          "net": "g25"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 32,
+          "net": "btn"
+        }
+      ],
+      "pots": [
+        {
+          "id": "RPU",
+          "pin": 35,
+          "analogMax": 200
+        }
+      ],
+      "buttons": [
+        {
+          "id": "BTN",
+          "pin": 32
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "RPU",
+          "a": "nc1",
+          "wiper": "btn",
+          "b": "3V3",
+          "rtotal": 2000000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "pot",
+          "id": "BTN",
+          "a": "nc2",
+          "wiper": "GND",
+          "b": "btn",
+          "rtotal": 1000000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "g25",
+          "b": "la",
+          "ohms": 220
+        },
+        {
+          "kind": "led",
+          "id": "LED1",
+          "anode": "la",
+          "cathode": "GND",
+          "pin": 25
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "released 10k",
+      "sliders": {
+        "35": 1
+      },
+      "expect": {
+        "v:btn": 3.267
+      }
+    },
+    {
+      "name": "released 100k",
+      "sliders": {
+        "35": 10
+      },
+      "expect": {
+        "v:btn": 3.0
+      }
+    },
+    {
+      "name": "released 1M",
+      "sliders": {
+        "35": 100
+      },
+      "expect": {
+        "v:btn": 1.65
+      }
+    },
+    {
+      "name": "released 2M",
+      "sliders": {
+        "35": 200
+      },
+      "expect": {
+        "v:btn": 1.1
+      }
+    }
+  ],
+  "programScenarios": [
+    {
+      "name": "released",
+      "print": [
+        "1"
+      ],
+      "last": {
+        "v:btn": 3.267,
+        "v:g25": 0
+      }
+    },
+    {
+      "name": "pressed",
+      "pressed": {
+        "32": true
+      },
+      "print": [
+        "0"
+      ],
+      "last": {
+        "v:btn": 0.00033,
+        "i:RPU": 0.00033,
+        "v:g25": 3.3,
+        "i:LED1": 0.00592
+      }
+    },
+    {
+      "name": "weak released 1M",
+      "sliders": {
+        "35": 100
+      },
+      "print": [
+        "1"
+      ]
+    },
+    {
+      "name": "too weak",
+      "sliders": {
+        "35": 120
+      },
+      "print": [
+        "0"
+      ],
+      "last": {
+        "v:btn": 1.5,
+        "v:g25": 3.3
+      }
+    },
+    {
+      "name": "pull-up 0 pressed",
+      "sliders": {
+        "35": 0
+      },
+      "pressed": {
+        "32": true
+      },
+      "last": {
+        "v:btn": 1.1,
+        "i:RPU": 1.1
+      }
+    }
+  ]
+}

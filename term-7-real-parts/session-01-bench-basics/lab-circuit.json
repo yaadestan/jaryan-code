@@ -1,0 +1,115 @@
+{
+  "key": "term-7-real-parts/session-01-bench-basics",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# first_power.py\n# barname-ye aval rooye bord-e vaghei: LED rooye GPIO 25 cheshmak mizanad.\nfrom machine import Pin\nimport time\n\nled = Pin(25, Pin.OUT)\n\nwhile True:\n    led.on()\n    print(\"on\")\n    time.sleep(1)\n    led.off()\n    print(\"off\")\n    time.sleep(1)\n",
+    "parts": [
+      {
+        "type": "led",
+        "pin": 25,
+        "color": "red",
+        "label": "LED"
+      },
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 20,
+        "initial": 3,
+        "label": "مقاومت (ضرب‌در ۱۰۰ اهم)"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 25,
+          "net": "g25"
+        }
+      ],
+      "pots": [
+        {
+          "id": "RV",
+          "pin": 34,
+          "analogMax": 20
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "RV",
+          "a": "nc",
+          "wiper": "la",
+          "b": "g25",
+          "rtotal": 2000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "led",
+          "id": "LED1",
+          "anode": "la",
+          "cathode": "GND",
+          "pin": 25
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "pin low",
+      "noProgram": true,
+      "sliders": {
+        "34": 3
+      },
+      "expect": {
+        "v:g25": 0
+      }
+    }
+  ],
+  "programScenarios": [
+    {
+      "name": "r300",
+      "sliders": {
+        "34": 3
+      },
+      "ms": 1200,
+      "print": [
+        "on"
+      ],
+      "max": {
+        "v:g25": 3.3,
+        "i:RV": 0.004395
+      }
+    },
+    {
+      "name": "r200",
+      "sliders": {
+        "34": 2
+      },
+      "ms": 1200,
+      "max": {
+        "i:RV": 0.006492
+      }
+    },
+    {
+      "name": "r1000",
+      "sliders": {
+        "34": 10
+      },
+      "ms": 1200,
+      "max": {
+        "i:RV": 0.001379
+      }
+    },
+    {
+      "name": "r0",
+      "sliders": {
+        "34": 0
+      },
+      "ms": 1200,
+      "max": {
+        "i:RV": 0.584
+      }
+    }
+  ]
+}

@@ -1,0 +1,382 @@
+{
+  "key": "term-4-diodes-oneway/session-05-bridge-rectifier",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: manba-e motenaveb az do paye-ye barax.\n# halat 0: mosbat-e sabet, 1: manfi-e sabet, 2: moj.\nfrom machine import Pin, ADC, PWM\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nmode = ADC(Pin(33))\nmode.atten(ADC.ATTN_11DB)\np = PWM(Pin(14), freq=1000)\nn = PWM(Pin(26), freq=1000)\n\nHALF = [0, 31, 59, 81, 95, 100, 95, 81, 59, 31]\ntop = round(knob.read() * 33 / 4095) * 31\nstate = round(mode.read() * 2 / 4095)\n\nif state == 0:\n    p.duty(top)\n    n.duty(0)\nelif state == 1:\n    p.duty(0)\n    n.duty(top)\n\nwhile True:\n    if state == 2:\n        for s in HALF:\n            p.duty(top * s // 100)\n            time.sleep(0.01)\n        p.duty(0)\n        for s in HALF:\n            n.duty(top * s // 100)\n            time.sleep(0.01)\n        n.duty(0)\n    else:\n        time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 33,
+        "initial": 33,
+        "label": "دامنهٔ منبع (ضرب‌در ۰٫۱ ولت)"
+      },
+      {
+        "type": "analog",
+        "pin": 33,
+        "sensor": "pot",
+        "analogMax": 2,
+        "initial": 2,
+        "label": "حالت منبع (۰ مثبت، ۱ منفی، ۲ موج)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 10,
+        "label": "مقاومت load (ضرب‌در ۱۰۰ اهم)"
+      },
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "خازن 100 µF (۰ قطع، ۱ وصل)"
+      },
+      {
+        "type": "analog",
+        "pin": 25,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "خازن 1000 µF (۰ قطع، ۱ وصل)"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 14,
+          "net": "p"
+        },
+        {
+          "pin": 26,
+          "net": "n"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        },
+        {
+          "pin": 33,
+          "net": "mode"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 33
+        },
+        {
+          "id": "MODE",
+          "pin": 33,
+          "analogMax": 2
+        },
+        {
+          "id": "RL",
+          "pin": 35,
+          "analogMax": 100
+        },
+        {
+          "id": "SW1",
+          "pin": 32,
+          "analogMax": 1
+        },
+        {
+          "id": "SW2",
+          "pin": 25,
+          "analogMax": 1
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "pot",
+          "id": "MODE",
+          "a": "3V3",
+          "wiper": "mode",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "diode",
+          "id": "D1",
+          "anode": "p",
+          "cathode": "op"
+        },
+        {
+          "kind": "diode",
+          "id": "D2",
+          "anode": "n",
+          "cathode": "op"
+        },
+        {
+          "kind": "diode",
+          "id": "D3",
+          "anode": "on",
+          "cathode": "p"
+        },
+        {
+          "kind": "diode",
+          "id": "D4",
+          "anode": "on",
+          "cathode": "n"
+        },
+        {
+          "kind": "pot",
+          "id": "RL",
+          "a": "nc",
+          "wiper": "on",
+          "b": "op",
+          "rtotal": 10000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "capacitor",
+          "id": "C1",
+          "a": "x1",
+          "b": "on",
+          "farads": 0.0001
+        },
+        {
+          "kind": "pot",
+          "id": "SW1",
+          "a": "op",
+          "wiper": "x1",
+          "b": "nc1",
+          "rtotal": 1000000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "capacitor",
+          "id": "C2",
+          "a": "x2",
+          "b": "on",
+          "farads": 0.001
+        },
+        {
+          "kind": "pot",
+          "id": "SW2",
+          "a": "op",
+          "wiper": "x2",
+          "b": "nc2",
+          "rtotal": 1000000,
+          "wiperPos": 1
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "plus nocap",
+      "sliders": {
+        "25": 0,
+        "32": 0,
+        "33": 0,
+        "34": 33,
+        "35": 10
+      },
+      "bench": true,
+      "expect": {
+        "v:op": 2.628,
+        "v:on": 0.672,
+        "i:D1": 0.00196,
+        "i:D4": 0.00196,
+        "i:RL": 0.001956
+      }
+    }
+  ],
+  "timeline": [
+    {
+      "name": "minus",
+      "sliders": {
+        "25": 0,
+        "32": 0,
+        "33": 1,
+        "34": 33,
+        "35": 10
+      },
+      "program": "ac",
+      "settle": 0.6,
+      "window": 0.1,
+      "expect": {
+        "mean:v:op": 2.628,
+        "mean:v:on": 0.672,
+        "max:i:RL": 0.001956,
+        "min:i:RL": 0.001956,
+        "mean:i:RL": 0.001956
+      }
+    },
+    {
+      "name": "wave nocap",
+      "sliders": {
+        "25": 0,
+        "32": 0,
+        "33": 2,
+        "34": 33,
+        "35": 10
+      },
+      "program": "ac",
+      "settle": 2,
+      "window": 1,
+      "expect": {
+        "mean:v:op": 1.52,
+        "mean:v:on": 0.564,
+        "max:i:RL": 0.001956,
+        "min:i:RL": 0,
+        "mean:i:RL": 0.000956
+      }
+    },
+    {
+      "name": "wave 100u",
+      "sliders": {
+        "25": 0,
+        "32": 1,
+        "33": 2,
+        "34": 33,
+        "35": 10
+      },
+      "program": "ac",
+      "settle": 3,
+      "window": 1,
+      "expect": {
+        "mean:v:op": 1.76,
+        "mean:v:on": 0.263,
+        "max:i:RL": 0.001941,
+        "min:i:RL": 0.001015,
+        "mean:i:RL": 0.001497
+      }
+    },
+    {
+      "name": "wave 1000u",
+      "sliders": {
+        "25": 1,
+        "32": 0,
+        "33": 2,
+        "34": 33,
+        "35": 10
+      },
+      "program": "ac",
+      "settle": 12,
+      "window": 1,
+      "expect": {
+        "mean:v:op": 1.864,
+        "mean:v:on": 0.068,
+        "max:i:RL": 0.001874,
+        "min:i:RL": 0.001727,
+        "mean:i:RL": 0.001796,
+        "max:i:D1": 0.0441
+      }
+    },
+    {
+      "name": "wave 1000u r500",
+      "sliders": {
+        "25": 1,
+        "32": 0,
+        "33": 2,
+        "34": 33,
+        "35": 5
+      },
+      "program": "ac",
+      "settle": 8,
+      "window": 1,
+      "expect": {
+        "mean:v:op": 1.851,
+        "mean:v:on": 0.131,
+        "max:i:RL": 0.003716,
+        "min:i:RL": 0.003164,
+        "mean:i:RL": 0.00344,
+        "max:i:D1": 0.0758
+      }
+    },
+    {
+      "name": "wave both",
+      "sliders": {
+        "25": 1,
+        "32": 1,
+        "33": 2,
+        "34": 33,
+        "35": 10
+      },
+      "program": "ac",
+      "settle": 12,
+      "window": 0.2,
+      "expect": {
+        "mean:v:op": 1.794,
+        "mean:v:on": -0.006,
+        "max:i:RL": 0.001872,
+        "min:i:RL": 0.001738,
+        "mean:i:RL": 0.0018
+      }
+    }
+  ],
+  "programScenarios": [
+    {
+      "name": "real program minus",
+      "sliders": {
+        "25": 0,
+        "32": 0,
+        "33": 1,
+        "34": 33,
+        "35": 10
+      },
+      "last": {
+        "i:RL": 0.001956
+      }
+    },
+    {
+      "name": "real program wave nocap",
+      "sliders": {
+        "25": 0,
+        "32": 0,
+        "33": 2,
+        "34": 33,
+        "35": 10
+      },
+      "ms": 1500,
+      "window": 1,
+      "max": {
+        "i:RL": 0.001956
+      },
+      "mean": {
+        "i:RL": 0.000956
+      }
+    },
+    {
+      "name": "real program wave 100u",
+      "sliders": {
+        "25": 0,
+        "32": 1,
+        "33": 2,
+        "34": 33,
+        "35": 10
+      },
+      "ms": 3500,
+      "window": 1,
+      "max": {
+        "i:RL": 0.001941
+      },
+      "min": {
+        "i:RL": 0.001015
+      },
+      "mean": {
+        "i:RL": 0.001497
+      }
+    }
+  ]
+}

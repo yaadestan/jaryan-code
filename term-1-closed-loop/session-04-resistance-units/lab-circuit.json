@@ -1,0 +1,121 @@
+{
+  "key": "term-1-closed-loop/session-04-resistance-units",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: barname-ye khali -- faghat saat-e shabih-saz ra jolo mibarad.\n# dar in fasl kod nemi-nevisim; madar khodash hal mishavad.\nimport time\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 10,
+        "label": "مقاومت (ضرب‌در ۱۰۰ اهم)"
+      }
+    ],
+    "analog": {
+      "pots": [
+        {
+          "id": "RV",
+          "pin": 34,
+          "analogMax": 100
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "RV",
+          "a": "nc",
+          "wiper": "GND",
+          "b": "3V3",
+          "rtotal": 10000,
+          "wiperPos": 0.5
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "r0",
+      "sliders": {
+        "34": 0
+      },
+      "expect": {
+        "i:RV": 330.0
+      }
+    },
+    {
+      "name": "r1",
+      "sliders": {
+        "34": 1
+      },
+      "expect": {
+        "i:RV": 0.033
+      }
+    },
+    {
+      "name": "r2",
+      "sliders": {
+        "34": 2
+      },
+      "expect": {
+        "i:RV": 0.0165
+      }
+    },
+    {
+      "name": "r5",
+      "sliders": {
+        "34": 5
+      },
+      "expect": {
+        "i:RV": 0.0066
+      }
+    },
+    {
+      "name": "r10",
+      "sliders": {
+        "34": 10
+      },
+      "expect": {
+        "i:RV": 0.0033
+      }
+    },
+    {
+      "name": "r20",
+      "sliders": {
+        "34": 20
+      },
+      "expect": {
+        "i:RV": 0.00165
+      }
+    },
+    {
+      "name": "r40",
+      "sliders": {
+        "34": 40
+      },
+      "expect": {
+        "i:RV": 0.000825
+      }
+    },
+    {
+      "name": "r50",
+      "sliders": {
+        "34": 50
+      },
+      "expect": {
+        "i:RV": 0.00066
+      }
+    },
+    {
+      "name": "r100",
+      "sliders": {
+        "34": 100
+      },
+      "expect": {
+        "i:RV": 0.00033
+      }
+    }
+  ]
+}

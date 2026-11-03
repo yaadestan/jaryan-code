@@ -1,0 +1,166 @@
+{
+  "key": "term-6-sensors-and-code/session-05-pwm-average",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# pwm_percent.py\n# slider darsad-e duty ra midahad; hamin duty rooye GPIO 14 va 25 miravad.\nfrom machine import Pin, ADC, PWM\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nload_pin = PWM(Pin(14), freq=1000)\nled_pin = PWM(Pin(25), freq=1000)\n\npercent = round(knob.read() * 100 / 4095)\nduty = round(percent * 1023 / 100)\nload_pin.duty(duty)\nled_pin.duty(duty)\nprint(percent, duty)\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 50,
+        "label": "duty (درصد)"
+      },
+      {
+        "type": "led",
+        "pin": 25,
+        "color": "red",
+        "resistorOhms": 220,
+        "label": "LED"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 14,
+          "net": "vs"
+        },
+        {
+          "pin": 25,
+          "net": "g25"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 100
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "RL",
+          "a": "vs",
+          "b": "GND",
+          "ohms": 1000
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "g25",
+          "b": "la",
+          "ohms": 220
+        },
+        {
+          "kind": "led",
+          "id": "LED1",
+          "anode": "la",
+          "cathode": "GND",
+          "pin": 25
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "bench reproduces term 1",
+      "sliders": {
+        "34": 50
+      },
+      "expect": {
+        "v:knob": 1.65
+      }
+    }
+  ],
+  "programScenarios": [
+    {
+      "name": "0",
+      "sliders": {
+        "34": 0
+      },
+      "print": [
+        "0 0"
+      ],
+      "last": {
+        "v:vs": 0,
+        "i:RL": 0
+      }
+    },
+    {
+      "name": "25",
+      "sliders": {
+        "34": 25
+      },
+      "print": [
+        "25 256"
+      ],
+      "last": {
+        "v:vs": 0.826,
+        "i:RL": 0.000826,
+        "i:LED1": 0.0015
+      }
+    },
+    {
+      "name": "50",
+      "sliders": {
+        "34": 50
+      },
+      "print": [
+        "50 512"
+      ],
+      "last": {
+        "v:vs": 1.652,
+        "i:RL": 0.001652,
+        "i:LED1": 0.003,
+        "i:R1": 7.2e-06
+      }
+    },
+    {
+      "name": "75",
+      "sliders": {
+        "34": 75
+      },
+      "print": [
+        "75 767"
+      ],
+      "last": {
+        "v:vs": 2.474,
+        "i:RL": 0.002474,
+        "i:LED1": 0.0045,
+        "i:R1": 0.002384
+      }
+    },
+    {
+      "name": "100",
+      "sliders": {
+        "34": 100
+      },
+      "print": [
+        "100 1023"
+      ],
+      "last": {
+        "v:vs": 3.3,
+        "i:RL": 0.0033,
+        "i:LED1": 0.006
+      }
+    }
+  ]
+}

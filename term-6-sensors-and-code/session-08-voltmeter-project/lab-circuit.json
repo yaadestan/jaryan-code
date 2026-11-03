@@ -1,0 +1,161 @@
+{
+  "key": "term-6-sensors-and-code/session-08-voltmeter-project",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# voltmeter.py\n# voltmeter: voltazh-e GPIO 35 zarb-dar 2, rooye OLED.\nfrom machine import Pin, ADC, I2C\nimport ssd1306\nimport time\n\nsensor = ADC(Pin(35))\nsensor.atten(ADC.ATTN_11DB)\ni2c = I2C(0, scl=Pin(22), sda=Pin(21))\noled = ssd1306.SSD1306_I2C(128, 64, i2c)\n\nwhile True:\n    raw = sensor.read()\n    volts = raw * 3.3 / 4095 * 2\n    width = round(volts * 128 / 3.3)\n    print(round(volts, 2))\n    oled.fill(0)\n    oled.text(\"Voltmeter\", 0, 0)\n    oled.text(str(round(volts, 2)) + \" V\", 0, 20)\n    oled.fill_rect(0, 40, width, 10, 1)\n    oled.show()\n    time.sleep(0.5)\n",
+    "parts": [
+      {
+        "type": "oled",
+        "sdaPin": 21,
+        "sclPin": 22,
+        "label": "OLED"
+      },
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 100,
+        "label": "منبع (درصد)"
+      }
+    ],
+    "analog": {
+      "reads": [
+        {
+          "pin": 35,
+          "net": "adc"
+        }
+      ],
+      "pots": [
+        {
+          "id": "SRC",
+          "pin": 34,
+          "analogMax": 100
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "SRC",
+          "a": "3V3",
+          "wiper": "vin",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "vin",
+          "b": "adc",
+          "ohms": 10000
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "adc",
+          "b": "GND",
+          "ohms": 10000
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "s100",
+      "sliders": {
+        "34": 100
+      },
+      "expect": {
+        "v:vin": 3.3,
+        "v:adc": 1.65
+      }
+    },
+    {
+      "name": "s75",
+      "sliders": {
+        "34": 75
+      },
+      "expect": {
+        "v:vin": 2.263,
+        "v:adc": 1.1315
+      }
+    },
+    {
+      "name": "s50",
+      "sliders": {
+        "34": 50
+      },
+      "expect": {
+        "v:vin": 1.467,
+        "v:adc": 0.7335
+      }
+    },
+    {
+      "name": "s25",
+      "sliders": {
+        "34": 25
+      },
+      "expect": {
+        "v:vin": 0.754,
+        "v:adc": 0.377
+      }
+    }
+  ],
+  "programScenarios": [
+    {
+      "name": "full",
+      "sliders": {
+        "34": 100
+      },
+      "print": [
+        "3.3"
+      ],
+      "oled": [
+        "Voltmeter",
+        "3.3 V"
+      ]
+    },
+    {
+      "name": "mid",
+      "sliders": {
+        "34": 50
+      },
+      "print": [
+        "1.47"
+      ],
+      "oled": [
+        "1.47 V"
+      ]
+    },
+    {
+      "name": "s75",
+      "sliders": {
+        "34": 75
+      },
+      "oled": [
+        "2.26 V"
+      ]
+    },
+    {
+      "name": "s25",
+      "sliders": {
+        "34": 25
+      },
+      "oled": [
+        "0.75 V"
+      ]
+    },
+    {
+      "name": "no scale",
+      "file": "voltmeter_no_scale.py",
+      "sliders": {
+        "34": 100
+      },
+      "print": [
+        "1.65"
+      ]
+    }
+  ]
+}

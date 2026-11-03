@@ -1,0 +1,161 @@
+{
+  "key": "term-6-sensors-and-code/session-07-servo-and-sonar",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# servo_sonar.py\n# slider zaviye-ye servo ra midahad; HC-SR04 fasele ra andaze migirad.\nfrom machine import Pin, ADC, PWM, time_pulse_us\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nservo = PWM(Pin(13), freq=50)\ntrig = Pin(5, Pin.OUT)\necho = Pin(18, Pin.IN)\n\nangle = round(knob.read() * 180 / 4095)\nduty = round(26 + angle * 97 / 180)\nservo.duty(duty)\nprint(angle, duty)\n\nwhile True:\n    trig.on()\n    time.sleep_us(10)\n    trig.off()\n    us = time_pulse_us(echo, 1, 30000)\n    if us < 0:\n        print(\"no echo\")\n    else:\n        print(us, round(us / 58, 1))\n    time.sleep(0.5)\n",
+    "parts": [
+      {
+        "type": "servo",
+        "pin": 13,
+        "label": "Servo"
+      },
+      {
+        "type": "ultrasonic",
+        "trigPin": 5,
+        "echoPin": 18,
+        "maxCm": 200,
+        "initial": 100,
+        "label": "HC-SR04"
+      },
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 180,
+        "initial": 90,
+        "label": "زاویه (درجه)"
+      }
+    ],
+    "analog": {
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 180
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "3V3",
+          "b": "div",
+          "ohms": 1000
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "div",
+          "b": "GND",
+          "ohms": 2000
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "divider ratio",
+      "sliders": {
+        "34": 90
+      },
+      "expect": {
+        "v:div": 2.2,
+        "i:R1": 0.0011
+      }
+    }
+  ],
+  "programScenarios": [
+    {
+      "name": "0 deg",
+      "sliders": {
+        "34": 0
+      },
+      "print": [
+        "0 26"
+      ],
+      "angle": {
+        "13": 1
+      },
+      "distance": 100
+    },
+    {
+      "name": "90 deg",
+      "sliders": {
+        "34": 90
+      },
+      "print": [
+        "90 74"
+      ],
+      "angle": {
+        "13": 90
+      },
+      "distance": 100
+    },
+    {
+      "name": "180 deg",
+      "sliders": {
+        "34": 180
+      },
+      "print": [
+        "180 123"
+      ],
+      "angle": {
+        "13": 180
+      },
+      "distance": 100
+    },
+    {
+      "name": "100 cm",
+      "distance": 100,
+      "print": [
+        "5800 100.0"
+      ]
+    },
+    {
+      "name": "17 cm",
+      "distance": 17,
+      "print": [
+        "986 17.0"
+      ]
+    },
+    {
+      "name": "2 cm",
+      "distance": 2,
+      "print": [
+        "116 2.0"
+      ]
+    },
+    {
+      "name": "short timeout ok",
+      "file": "short_timeout.py",
+      "distance": 17,
+      "print": [
+        "986"
+      ]
+    },
+    {
+      "name": "short timeout fail",
+      "file": "short_timeout.py",
+      "distance": 100,
+      "print": [
+        "-2"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,460 @@
+{
+  "key": "term-5-transistor-control/session-05-common-emitter",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: voltazh-e vorudi = markaz + moj-e kuchak.\n# slider 34 markaz, slider 35 damane (har gam 0.1 volt).\nfrom machine import Pin, ADC, PWM\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nsize = ADC(Pin(35))\nsize.atten(ADC.ATTN_11DB)\nsupply = PWM(Pin(14), freq=1000)\n\nHALF = [0, 31, 59, 81, 95, 100, 95, 81, 59, 31]\nWAVE = HALF + [-s for s in HALF]\ncentre = round(knob.read() * 33 / 4095) * 31\namp = round(size.read() * 10 / 4095) * 31\n\nwhile True:\n    for s in WAVE:\n        supply.duty(max(0, min(1023, centre + amp * s // 100)))\n        time.sleep(0.01)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 33,
+        "initial": 20,
+        "label": "مرکز ورودی (ضرب‌در ۰٫۱ ولت)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 10,
+        "initial": 0,
+        "label": "دامنهٔ موج (ضرب‌در ۰٫۱ ولت)"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 14,
+          "net": "vs"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        },
+        {
+          "pin": 35,
+          "net": "size"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 33
+        },
+        {
+          "id": "SIZE",
+          "pin": 35,
+          "analogMax": 10
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "pot",
+          "id": "SIZE",
+          "a": "3V3",
+          "wiper": "size",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "3V3",
+          "b": "b",
+          "ohms": 56000
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "b",
+          "b": "GND",
+          "ohms": 10000
+        },
+        {
+          "kind": "resistor",
+          "id": "RS",
+          "a": "vs",
+          "b": "b",
+          "ohms": 22000
+        },
+        {
+          "kind": "resistor",
+          "id": "RC",
+          "a": "3V3",
+          "b": "c",
+          "ohms": 2200
+        },
+        {
+          "kind": "resistor",
+          "id": "RE",
+          "a": "e",
+          "b": "GND",
+          "ohms": 220
+        },
+        {
+          "kind": "npn",
+          "id": "Q1",
+          "c": "c",
+          "base": "b",
+          "e": "e"
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "v0",
+      "sliders": {
+        "34": 0,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.361,
+        "v:c": 3.3,
+        "v:e": 0,
+        "i:RC": 0
+      }
+    },
+    {
+      "name": "v5",
+      "sliders": {
+        "34": 5,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.5,
+        "v:c": 3.299,
+        "v:e": 0,
+        "i:RC": 0
+      }
+    },
+    {
+      "name": "v10",
+      "sliders": {
+        "34": 10,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.637,
+        "v:c": 3.22,
+        "v:e": 0.008,
+        "i:RC": 0.000037
+      }
+    },
+    {
+      "name": "v12",
+      "sliders": {
+        "34": 12,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.687,
+        "v:c": 3.03,
+        "v:e": 0.027,
+        "i:RC": 0.000123
+      }
+    },
+    {
+      "name": "v13",
+      "sliders": {
+        "34": 13,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.711,
+        "v:c": 2.895,
+        "v:e": 0.041,
+        "i:RC": 0.000184
+      }
+    },
+    {
+      "name": "v14",
+      "sliders": {
+        "34": 14,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.735,
+        "v:c": 2.743,
+        "v:e": 0.056,
+        "i:RC": 0.000253
+      }
+    },
+    {
+      "name": "v15",
+      "sliders": {
+        "34": 15,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.758,
+        "v:c": 2.579,
+        "v:e": 0.073,
+        "i:RC": 0.000328
+      }
+    },
+    {
+      "name": "v16",
+      "sliders": {
+        "34": 16,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.781,
+        "v:c": 2.406,
+        "v:e": 0.09,
+        "i:RC": 0.000406
+      }
+    },
+    {
+      "name": "v17",
+      "sliders": {
+        "34": 17,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.804,
+        "v:c": 2.227,
+        "v:e": 0.108,
+        "i:RC": 0.000488
+      }
+    },
+    {
+      "name": "v18",
+      "sliders": {
+        "34": 18,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.827,
+        "v:c": 2.043,
+        "v:e": 0.127,
+        "i:RC": 0.000571
+      }
+    },
+    {
+      "name": "v19",
+      "sliders": {
+        "34": 19,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.849,
+        "v:c": 1.855,
+        "v:e": 0.146,
+        "i:RC": 0.000657
+      }
+    },
+    {
+      "name": "v20",
+      "sliders": {
+        "34": 20,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.872,
+        "v:c": 1.664,
+        "v:e": 0.165,
+        "i:RC": 0.000744
+      }
+    },
+    {
+      "name": "v21",
+      "sliders": {
+        "34": 21,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.894,
+        "v:c": 1.47,
+        "v:e": 0.185,
+        "i:RC": 0.000832
+      }
+    },
+    {
+      "name": "v22",
+      "sliders": {
+        "34": 22,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.917,
+        "v:c": 1.274,
+        "v:e": 0.205,
+        "i:RC": 0.000921
+      }
+    },
+    {
+      "name": "v25",
+      "sliders": {
+        "34": 25,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.984,
+        "v:c": 0.678,
+        "v:e": 0.265,
+        "i:RC": 0.001192
+      }
+    },
+    {
+      "name": "v30",
+      "sliders": {
+        "34": 30,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 1.017,
+        "v:c": 0.41,
+        "v:e": 0.295,
+        "i:RC": 0.001313
+      }
+    },
+    {
+      "name": "v33",
+      "sliders": {
+        "34": 33,
+        "35": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 1.022,
+        "v:c": 0.4,
+        "v:e": 0.299,
+        "i:RC": 0.001318
+      }
+    }
+  ],
+  "timeline": [
+    {
+      "name": "small",
+      "sliders": {
+        "34": 20,
+        "35": 2
+      },
+      "program": "signal",
+      "settle": 0.4,
+      "window": 0.2,
+      "expect": {
+        "max:v:b": 0.917,
+        "min:v:b": 0.827,
+        "max:v:c": 2.043,
+        "min:v:c": 1.274
+      }
+    },
+    {
+      "name": "mid",
+      "sliders": {
+        "34": 20,
+        "35": 3
+      },
+      "program": "signal",
+      "settle": 0.4,
+      "window": 0.2,
+      "expect": {
+        "max:v:b": 0.939,
+        "min:v:b": 0.804,
+        "max:v:c": 2.227,
+        "min:v:c": 1.077
+      }
+    },
+    {
+      "name": "high bias",
+      "sliders": {
+        "34": 25,
+        "35": 3
+      },
+      "program": "signal",
+      "settle": 0.4,
+      "window": 0.2,
+      "expect": {
+        "max:v:b": 1.013,
+        "min:v:b": 0.917,
+        "max:v:c": 1.274,
+        "min:v:c": 0.426
+      }
+    },
+    {
+      "name": "big",
+      "sliders": {
+        "34": 20,
+        "35": 10
+      },
+      "program": "signal",
+      "settle": 0.4,
+      "window": 0.2,
+      "expect": {
+        "max:v:b": 1.017,
+        "min:v:b": 0.637,
+        "max:v:c": 3.22,
+        "min:v:c": 0.41
+      }
+    }
+  ],
+  "programScenarios": [
+    {
+      "name": "real program small",
+      "sliders": {
+        "34": 20,
+        "35": 2
+      },
+      "ms": 900,
+      "window": 0.4,
+      "max": {
+        "v:b": 0.917,
+        "v:c": 2.043
+      },
+      "min": {
+        "v:b": 0.827,
+        "v:c": 1.274
+      }
+    },
+    {
+      "name": "real program big",
+      "sliders": {
+        "34": 20,
+        "35": 10
+      },
+      "ms": 900,
+      "window": 0.4,
+      "max": {
+        "v:b": 1.017,
+        "v:c": 3.22
+      },
+      "min": {
+        "v:b": 0.637,
+        "v:c": 0.41
+      }
+    }
+  ]
+}

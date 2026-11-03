@@ -1,0 +1,258 @@
+{
+  "key": "term-2-circuit-analysis/session-06-loaded-divider",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: barname-ye khali -- faghat saat-e shabih-saz ra jolo mibarad.\n# dar in fasl kod nemi-nevisim; madar khodash hal mishavad.\nimport time\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 100,
+        "label": "RL1 (ضرب‌در ۱ کیلواهم)"
+      },
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "load مقسم ۱۰k (۰ قطع، ۱ وصل)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 10,
+        "label": "RL2 (ضرب‌در ۱ کیلواهم)"
+      },
+      {
+        "type": "analog",
+        "pin": 33,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "load مقسم ۱k (۰ قطع، ۱ وصل)"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 10000,
+        "label": "R1",
+        "link": "R1"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 10000,
+        "label": "R2",
+        "link": "R2"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 1000,
+        "label": "R3",
+        "link": "R3"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 1000,
+        "label": "R4",
+        "link": "R4"
+      }
+    ],
+    "analog": {
+      "pots": [
+        {
+          "id": "RL1",
+          "pin": 34,
+          "analogMax": 100
+        },
+        {
+          "id": "SW1",
+          "pin": 32,
+          "analogMax": 1
+        },
+        {
+          "id": "RL2",
+          "pin": 35,
+          "analogMax": 100
+        },
+        {
+          "id": "SW2",
+          "pin": 33,
+          "analogMax": 1
+        }
+      ],
+      "components": [
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "3V3",
+          "b": "out1",
+          "ohms": 10000
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "out1",
+          "b": "GND",
+          "ohms": 10000
+        },
+        {
+          "kind": "pot",
+          "id": "SW1",
+          "a": "out1",
+          "wiper": "l1",
+          "b": "nc1",
+          "rtotal": 10000000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "pot",
+          "id": "RL1",
+          "a": "nc2",
+          "wiper": "GND",
+          "b": "l1",
+          "rtotal": 100000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "R3",
+          "a": "3V3",
+          "b": "out2",
+          "ohms": 1000
+        },
+        {
+          "kind": "resistor",
+          "id": "R4",
+          "a": "out2",
+          "b": "GND",
+          "ohms": 1000
+        },
+        {
+          "kind": "pot",
+          "id": "SW2",
+          "a": "out2",
+          "wiper": "l2",
+          "b": "nc3",
+          "rtotal": 10000000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "pot",
+          "id": "RL2",
+          "a": "nc4",
+          "wiper": "GND",
+          "b": "l2",
+          "rtotal": 100000,
+          "wiperPos": 0.5
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "none",
+      "sliders": {
+        "32": 0,
+        "33": 0
+      },
+      "expect": {
+        "v:out1": 1.65,
+        "v:out2": 1.65,
+        "i:R1": 0.000165,
+        "i:R3": 0.00165
+      }
+    },
+    {
+      "name": "100k",
+      "sliders": {
+        "32": 1,
+        "34": 100
+      },
+      "expect": {
+        "v:out1": 1.571
+      }
+    },
+    {
+      "name": "50k",
+      "sliders": {
+        "32": 1,
+        "34": 50
+      },
+      "expect": {
+        "v:out1": 1.5
+      }
+    },
+    {
+      "name": "10k",
+      "sliders": {
+        "32": 1,
+        "34": 10
+      },
+      "expect": {
+        "v:out1": 1.1,
+        "i:R1": 0.00022,
+        "i:R2": 0.00011,
+        "i:RL1": 0.00011
+      }
+    },
+    {
+      "name": "5k",
+      "sliders": {
+        "32": 1,
+        "34": 5
+      },
+      "expect": {
+        "v:out1": 0.826
+      }
+    },
+    {
+      "name": "1k",
+      "sliders": {
+        "32": 1,
+        "34": 1
+      },
+      "expect": {
+        "v:out1": 0.277
+      }
+    },
+    {
+      "name": "stiff 10k",
+      "sliders": {
+        "33": 1,
+        "35": 10
+      },
+      "expect": {
+        "v:out2": 1.572
+      }
+    },
+    {
+      "name": "stiff 5k",
+      "sliders": {
+        "33": 1,
+        "35": 5
+      },
+      "expect": {
+        "v:out2": 1.5
+      }
+    },
+    {
+      "name": "stiff 1k",
+      "sliders": {
+        "33": 1,
+        "35": 1
+      },
+      "expect": {
+        "v:out2": 1.104
+      }
+    }
+  ]
+}

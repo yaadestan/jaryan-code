@@ -1,0 +1,254 @@
+{
+  "key": "term-3-time-and-storage/session-05-capacitor-combos",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: slider zaman-e andazegiri ra migooyad; bad az an barname tamam mishavad\n# ta adad-e multimeter sabet bemanad.\nfrom machine import Pin, ADC\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nsteps = round(knob.read() * 300 / 4095)\ntime.sleep(steps * 0.01)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 300,
+        "initial": 20,
+        "label": "زمان اندازه‌گیری (ضرب‌در ۰٫۰۱ ثانیه)"
+      },
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "C2 موازی با C1 (۰ قطع، ۱ وصل)"
+      },
+      {
+        "type": "analog",
+        "pin": 33,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "اتصال کوتاه روی C4 (۰ نیست، ۱ هست)"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 20000,
+        "label": "R1",
+        "link": "R1"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 20000,
+        "label": "R2",
+        "link": "R2"
+      },
+      {
+        "type": "passive",
+        "passive": "capacitor",
+        "label": "C1 = ۱۰µF",
+        "link": "C1"
+      },
+      {
+        "type": "passive",
+        "passive": "capacitor",
+        "label": "C2 = ۲۰µF",
+        "link": "C2"
+      },
+      {
+        "type": "passive",
+        "passive": "capacitor",
+        "label": "C3 = ۱۰µF",
+        "link": "C3"
+      },
+      {
+        "type": "passive",
+        "passive": "capacitor",
+        "label": "C4 = ۲۰µF",
+        "link": "C4"
+      }
+    ],
+    "analog": {
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 300
+        },
+        {
+          "id": "SW1",
+          "pin": 32,
+          "analogMax": 1
+        },
+        {
+          "id": "SW2",
+          "pin": 33,
+          "analogMax": 1
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "3V3",
+          "b": "a",
+          "ohms": 20000
+        },
+        {
+          "kind": "capacitor",
+          "id": "C1",
+          "a": "a",
+          "b": "GND",
+          "farads": 0.00001,
+          "v0": 0
+        },
+        {
+          "kind": "pot",
+          "id": "SW1",
+          "a": "a",
+          "wiper": "y",
+          "b": "nc1",
+          "rtotal": 100000000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "capacitor",
+          "id": "C2",
+          "a": "y",
+          "b": "GND",
+          "farads": 0.00002,
+          "v0": 0
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "3V3",
+          "b": "b",
+          "ohms": 20000
+        },
+        {
+          "kind": "capacitor",
+          "id": "C3",
+          "a": "b",
+          "b": "m",
+          "farads": 0.00001,
+          "v0": 0
+        },
+        {
+          "kind": "capacitor",
+          "id": "C4",
+          "a": "m",
+          "b": "GND",
+          "farads": 0.00002,
+          "v0": 0
+        },
+        {
+          "kind": "pot",
+          "id": "SW2",
+          "a": "m",
+          "wiper": "GND",
+          "b": "nc2",
+          "rtotal": 100000000,
+          "wiperPos": 1
+        }
+      ]
+    }
+  },
+  "scenarios": [],
+  "trace": [
+    {
+      "name": "t20 p0 s0",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 20
+      },
+      "expect": {
+        "v:a": 2.083,
+        "v:b": 2.56
+      }
+    },
+    {
+      "name": "t60 p1 s0",
+      "sliders": {
+        "32": 1,
+        "33": 0,
+        "34": 60
+      },
+      "expect": {
+        "v:a": 2.085
+      }
+    },
+    {
+      "name": "t20 p1 s0",
+      "sliders": {
+        "32": 1,
+        "33": 0,
+        "34": 20
+      },
+      "expect": {
+        "v:a": 0.938
+      }
+    },
+    {
+      "name": "t13 p0 s0",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 13
+      },
+      "expect": {
+        "v:b": 2.051
+      }
+    },
+    {
+      "name": "t300 p0 s0",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 300
+      },
+      "expect": {
+        "v:a": 3.299,
+        "v:b": 3.3,
+        "v:m": 1.099
+      }
+    },
+    {
+      "name": "t300 p1 s0",
+      "sliders": {
+        "32": 1,
+        "33": 0,
+        "34": 300
+      },
+      "expect": {}
+    },
+    {
+      "name": "t20 p0 s1",
+      "sliders": {
+        "32": 0,
+        "33": 1,
+        "34": 20
+      },
+      "expect": {
+        "v:b": 2.083,
+        "v:m": 0.006
+      }
+    }
+  ]
+}

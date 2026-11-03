@@ -1,0 +1,174 @@
+{
+  "key": "term-6-sensors-and-code/session-03-adc-reading",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# read_volts.py\n# voltazh-e GPIO 34 ra mikhanad va be volt tabdil mikonad.\nfrom machine import Pin, ADC\nimport time\n\nsensor = ADC(Pin(34))\nsensor.atten(ADC.ATTN_11DB)\n\nwhile True:\n    raw = sensor.read()\n    volts = raw * 3.3 / 4095\n    print(raw, round(volts, 2))\n    time.sleep(0.5)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 33,
+        "initial": 10,
+        "label": "ولتاژ ورودی (ضرب‌در ۰٫۱ ولت)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "ldr",
+        "analogMax": 100,
+        "initial": 50,
+        "label": "نور (درصد)"
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "name": "v1.0",
+      "sliders": {
+        "34": 10,
+        "35": 50
+      },
+      "expect": {
+        "v:g34": 1.0,
+        "v:g35": 1.65
+      }
+    },
+    {
+      "name": "v3.3",
+      "sliders": {
+        "34": 33,
+        "35": 100
+      },
+      "expect": {
+        "v:g34": 3.3,
+        "v:g35": 3.143
+      }
+    },
+    {
+      "name": "dark",
+      "sliders": {
+        "34": 0,
+        "35": 0
+      },
+      "expect": {
+        "v:g35": 0.157
+      }
+    }
+  ],
+  "programScenarios": [
+    {
+      "name": "v0",
+      "sliders": {
+        "34": 0
+      },
+      "print": [
+        "0 0.0"
+      ]
+    },
+    {
+      "name": "v1.0",
+      "sliders": {
+        "34": 10
+      },
+      "print": [
+        "1241 1.0"
+      ]
+    },
+    {
+      "name": "v1.5",
+      "sliders": {
+        "34": 15
+      },
+      "print": [
+        "1861 1.5"
+      ]
+    },
+    {
+      "name": "v2.5",
+      "sliders": {
+        "34": 25
+      },
+      "print": [
+        "3102 2.5"
+      ]
+    },
+    {
+      "name": "v2.0",
+      "sliders": {
+        "34": 20
+      },
+      "print": [
+        "2482 2.0"
+      ]
+    },
+    {
+      "name": "v0.5",
+      "sliders": {
+        "34": 5
+      },
+      "print": [
+        "620 0.5"
+      ]
+    },
+    {
+      "name": "v3.0",
+      "sliders": {
+        "34": 30
+      },
+      "print": [
+        "3723 3.0"
+      ]
+    },
+    {
+      "name": "v3.3",
+      "sliders": {
+        "34": 33
+      },
+      "print": [
+        "4095 3.3"
+      ]
+    },
+    {
+      "name": "wrong scale",
+      "file": "read_wrong_scale.py",
+      "sliders": {
+        "34": 10
+      },
+      "print": [
+        "1241 4.0"
+      ]
+    },
+    {
+      "name": "light 100",
+      "file": "read_light.py",
+      "sliders": {
+        "35": 100
+      },
+      "print": [
+        "3900 3.14"
+      ]
+    },
+    {
+      "name": "light 50",
+      "file": "read_light.py",
+      "sliders": {
+        "35": 50
+      },
+      "print": [
+        "2047 1.65"
+      ]
+    },
+    {
+      "name": "light 0",
+      "file": "read_light.py",
+      "sliders": {
+        "35": 0
+      },
+      "print": [
+        "195 0.16"
+      ]
+    }
+  ]
+}

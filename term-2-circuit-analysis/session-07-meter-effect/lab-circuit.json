@@ -1,0 +1,201 @@
+{
+  "key": "term-2-circuit-analysis/session-07-meter-effect",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: barname-ye khali -- faghat saat-e shabih-saz ra jolo mibarad.\n# dar in fasl kod nemi-nevisim; madar khodash hal mishavad.\nimport time\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "voltmeter (۰ قطع، ۱ وصل)"
+      },
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 100,
+        "label": "مقاومت ورودی voltmeter (ضرب‌در ۱۰۰ کیلواهم)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 0,
+        "label": "مقاومت ammeter (اهم)"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 100000,
+        "label": "R1",
+        "link": "R1"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 100000,
+        "label": "R2",
+        "link": "R2"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 100,
+        "label": "R3",
+        "link": "R3"
+      }
+    ],
+    "analog": {
+      "pots": [
+        {
+          "id": "SWV",
+          "pin": 32,
+          "analogMax": 1
+        },
+        {
+          "id": "RV",
+          "pin": 34,
+          "analogMax": 100
+        },
+        {
+          "id": "RA",
+          "pin": 35,
+          "analogMax": 100
+        }
+      ],
+      "components": [
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "3V3",
+          "b": "m",
+          "ohms": 100000
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "m",
+          "b": "GND",
+          "ohms": 100000
+        },
+        {
+          "kind": "pot",
+          "id": "SWV",
+          "a": "m",
+          "wiper": "v",
+          "b": "nc1",
+          "rtotal": 100000000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "pot",
+          "id": "RV",
+          "a": "nc2",
+          "wiper": "GND",
+          "b": "v",
+          "rtotal": 10000000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "R3",
+          "a": "3V3",
+          "b": "p",
+          "ohms": 100
+        },
+        {
+          "kind": "pot",
+          "id": "RA",
+          "a": "nc3",
+          "wiper": "GND",
+          "b": "p",
+          "rtotal": 100,
+          "wiperPos": 0.5
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "no meter",
+      "sliders": {
+        "32": 0
+      },
+      "expect": {
+        "v:m": 1.65
+      }
+    },
+    {
+      "name": "10M",
+      "sliders": {
+        "32": 1,
+        "34": 100
+      },
+      "expect": {
+        "v:m": 1.642
+      }
+    },
+    {
+      "name": "1M",
+      "sliders": {
+        "32": 1,
+        "34": 10
+      },
+      "expect": {
+        "v:m": 1.571
+      }
+    },
+    {
+      "name": "100k",
+      "sliders": {
+        "32": 1,
+        "34": 1
+      },
+      "expect": {
+        "v:m": 1.1
+      }
+    },
+    {
+      "name": "ra0",
+      "sliders": {
+        "35": 0
+      },
+      "expect": {
+        "i:R3": 0.033
+      }
+    },
+    {
+      "name": "ra1",
+      "sliders": {
+        "35": 1
+      },
+      "expect": {
+        "i:R3": 0.03267
+      }
+    },
+    {
+      "name": "ra10",
+      "sliders": {
+        "35": 10
+      },
+      "expect": {
+        "i:R3": 0.03
+      }
+    },
+    {
+      "name": "ra100",
+      "sliders": {
+        "35": 100
+      },
+      "expect": {
+        "i:R3": 0.0165
+      }
+    }
+  ]
+}

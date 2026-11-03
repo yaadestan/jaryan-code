@@ -1,0 +1,276 @@
+{
+  "key": "term-5-transistor-control/session-08-sensitive-switch-project",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: barname-ye khali -- faghat saat-e shabih-saz ra jolo mibarad.\n# dar in fasl kod nemi-nevisim; madar khodash hal mishavad.\nimport time\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 10,
+        "label": "مقاومت لمس Darlington (ضرب‌در ۱۰۰ کیلواهم)"
+      },
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 10,
+        "label": "مقاومت لمس تک‌ترانزیستور (ضرب‌در ۱۰۰ کیلواهم)"
+      },
+      {
+        "type": "led",
+        "pin": 99,
+        "color": "green",
+        "label": "LED1"
+      },
+      {
+        "type": "led",
+        "pin": 98,
+        "color": "green",
+        "label": "LED2"
+      }
+    ],
+    "analog": {
+      "pots": [
+        {
+          "id": "RT1",
+          "pin": 35,
+          "analogMax": 100
+        },
+        {
+          "id": "RT2",
+          "pin": 32,
+          "analogMax": 100
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "RT1",
+          "a": "nc1",
+          "wiper": "b1",
+          "b": "3V3",
+          "rtotal": 10000000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "3V3",
+          "b": "a1",
+          "ohms": 120
+        },
+        {
+          "kind": "led",
+          "id": "LED1",
+          "anode": "a1",
+          "cathode": "c1",
+          "pin": 99
+        },
+        {
+          "kind": "npn",
+          "id": "Q1",
+          "c": "c1",
+          "base": "b1",
+          "e": "e1"
+        },
+        {
+          "kind": "npn",
+          "id": "Q2",
+          "c": "c1",
+          "base": "e1",
+          "e": "GND"
+        },
+        {
+          "kind": "pot",
+          "id": "RT2",
+          "a": "nc2",
+          "wiper": "b3",
+          "b": "3V3",
+          "rtotal": 10000000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "3V3",
+          "b": "a2",
+          "ohms": 120
+        },
+        {
+          "kind": "led",
+          "id": "LED2",
+          "anode": "a2",
+          "cathode": "c3",
+          "pin": 98
+        },
+        {
+          "kind": "npn",
+          "id": "Q3",
+          "c": "c3",
+          "base": "b3",
+          "e": "GND"
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "r100",
+      "sliders": {
+        "32": 100,
+        "35": 100
+      },
+      "expect": {
+        "v:b1": 1.345,
+        "v:c1": 1.12,
+        "v:e1": 0.732,
+        "v:c3": 1.579,
+        "i:RT1": 0,
+        "i:LED1": 0.001995,
+        "i:RT2": 0,
+        "i:LED2": 0.000027
+      }
+    },
+    {
+      "name": "r50",
+      "sliders": {
+        "32": 50,
+        "35": 50
+      },
+      "expect": {
+        "v:b1": 1.373,
+        "v:c1": 0.917,
+        "v:e1": 0.746,
+        "v:c3": 1.54,
+        "i:RT1": 0,
+        "i:LED1": 0.003454,
+        "i:RT2": 0.000001,
+        "i:LED2": 0.000053
+      }
+    },
+    {
+      "name": "r20",
+      "sliders": {
+        "32": 20,
+        "35": 20
+      },
+      "expect": {
+        "v:b1": 1.379,
+        "v:c1": 0.858,
+        "v:e1": 0.749,
+        "v:c3": 1.484,
+        "i:RT1": 0.000001,
+        "i:LED1": 0.00389,
+        "i:RT2": 0.000001,
+        "i:LED2": 0.000132
+      }
+    },
+    {
+      "name": "r10",
+      "sliders": {
+        "32": 10,
+        "35": 10
+      },
+      "expect": {
+        "v:b1": 1.382,
+        "v:c1": 0.836,
+        "v:e1": 0.75,
+        "v:c3": 1.433,
+        "i:RT1": 0.000002,
+        "i:LED1": 0.004057,
+        "i:RT2": 0.000003,
+        "i:LED2": 0.000262
+      }
+    },
+    {
+      "name": "r5",
+      "sliders": {
+        "32": 5,
+        "35": 5
+      },
+      "expect": {
+        "v:b1": 1.385,
+        "v:c1": 0.818,
+        "v:e1": 0.751,
+        "v:c3": 1.366,
+        "i:RT1": 0.000004,
+        "i:LED1": 0.004194,
+        "i:RT2": 0.000005,
+        "i:LED2": 0.000521
+      }
+    },
+    {
+      "name": "r3",
+      "sliders": {
+        "32": 3,
+        "35": 3
+      },
+      "expect": {
+        "v:b1": 1.387,
+        "v:c1": 0.806,
+        "v:e1": 0.752,
+        "v:c3": 1.299,
+        "i:RT1": 0.000006,
+        "i:LED1": 0.004284,
+        "i:RT2": 0.000009,
+        "i:LED2": 0.000863
+      }
+    },
+    {
+      "name": "r2",
+      "sliders": {
+        "32": 2,
+        "35": 2
+      },
+      "expect": {
+        "v:b1": 1.39,
+        "v:c1": 0.797,
+        "v:e1": 0.752,
+        "v:c3": 1.227,
+        "i:RT1": 0.00001,
+        "i:LED1": 0.004349,
+        "i:RT2": 0.000013,
+        "i:LED2": 0.00129
+      }
+    },
+    {
+      "name": "r1",
+      "sliders": {
+        "32": 1,
+        "35": 1
+      },
+      "expect": {
+        "v:b1": 1.395,
+        "v:c1": 0.784,
+        "v:e1": 0.753,
+        "v:c3": 1.039,
+        "i:RT1": 0.000019,
+        "i:LED1": 0.004449,
+        "i:RT2": 0.000026,
+        "i:LED2": 0.002561
+      }
+    },
+    {
+      "name": "r0",
+      "sliders": {
+        "32": 10,
+        "35": 0
+      },
+      "expect": {
+        "v:b1": 1.691,
+        "v:c1": 0.846,
+        "v:e1": 0.846,
+        "v:c3": 1.433,
+        "i:RT1": 0.160856,
+        "i:LED1": 0.003981,
+        "i:RT2": 0.000003,
+        "i:LED2": 0.000262
+      }
+    }
+  ]
+}

@@ -1,0 +1,198 @@
+{
+  "key": "term-7-real-parts/session-03-capstone-design",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# guard_design.py\n# negahban-e tariki: ADC rooye GPIO 34, transistor rooye GPIO 25, buzzer rooye GPIO 4.\nfrom machine import Pin, ADC, PWM\nimport time\n\nTHRESHOLD = 0.55\n\nsensor = ADC(Pin(34))\nsensor.atten(ADC.ATTN_11DB)\nlamp = Pin(25, Pin.OUT)\nbuzzer = PWM(Pin(4), freq=880)\nbuzzer.duty(0)\n\nwhile True:\n    volts = sensor.read() * 3.3 / 4095\n    print(round(volts, 2))\n    if volts < THRESHOLD:\n        lamp.on()\n        buzzer.duty(512)\n    else:\n        lamp.off()\n        buzzer.duty(0)\n    time.sleep(0.5)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "ldr",
+        "analogMax": 200,
+        "initial": 10,
+        "label": "مقاومت LDR (کیلواهم)"
+      },
+      {
+        "type": "led",
+        "pin": 25,
+        "color": "red",
+        "label": "چراغ"
+      },
+      {
+        "type": "buzzer",
+        "pin": 4,
+        "label": "Buzzer"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 25,
+          "net": "g25"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 34,
+          "net": "sense"
+        }
+      ],
+      "pots": [
+        {
+          "id": "RLDR",
+          "pin": 34,
+          "analogMax": 200
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "RLDR",
+          "a": "nc",
+          "wiper": "3V3",
+          "b": "sense",
+          "rtotal": 200000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "RF",
+          "a": "sense",
+          "b": "GND",
+          "ohms": 10000
+        },
+        {
+          "kind": "resistor",
+          "id": "RB",
+          "a": "g25",
+          "b": "b",
+          "ohms": 4700
+        },
+        {
+          "kind": "npn",
+          "id": "Q1",
+          "c": "c",
+          "base": "b",
+          "e": "GND"
+        },
+        {
+          "kind": "resistor",
+          "id": "RC",
+          "a": "3V3",
+          "b": "la",
+          "ohms": 100
+        },
+        {
+          "kind": "led",
+          "id": "LED1",
+          "anode": "la",
+          "cathode": "c",
+          "pin": 25
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "room",
+      "sliders": {
+        "34": 10
+      },
+      "expect": {
+        "v:sense": 1.65
+      }
+    },
+    {
+      "name": "threshold",
+      "sliders": {
+        "34": 50
+      },
+      "expect": {
+        "v:sense": 0.55
+      }
+    },
+    {
+      "name": "dark",
+      "sliders": {
+        "34": 200
+      },
+      "expect": {
+        "v:sense": 0.157
+      }
+    }
+  ],
+  "programScenarios": [
+    {
+      "name": "room",
+      "sliders": {
+        "34": 10
+      },
+      "print": [
+        "1.65"
+      ],
+      "last": {
+        "v:g25": 0,
+        "i:LED1": 0,
+        "v:c": 2.396
+      },
+      "pin": {
+        "4": {
+          "on": false
+        }
+      }
+    },
+    {
+      "name": "dark",
+      "sliders": {
+        "34": 200
+      },
+      "print": [
+        "0.16"
+      ],
+      "last": {
+        "v:g25": 3.3,
+        "i:LED1": 0.01179,
+        "v:c": 0.089,
+        "i:RB": 0.000536
+      },
+      "pin": {
+        "4": {
+          "on": true,
+          "freq": 880
+        }
+      }
+    },
+    {
+      "name": "just dark",
+      "sliders": {
+        "34": 51
+      },
+      "last": {
+        "v:g25": 3.3
+      }
+    },
+    {
+      "name": "wrong unit",
+      "file": "guard_wrong_unit.py",
+      "sliders": {
+        "34": 1
+      },
+      "print": [
+        "3.0"
+      ],
+      "last": {
+        "v:g25": 3.3
+      }
+    },
+    {
+      "name": "just light",
+      "sliders": {
+        "34": 49
+      },
+      "last": {
+        "v:g25": 0
+      }
+    }
+  ]
+}

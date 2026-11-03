@@ -1,0 +1,355 @@
+{
+  "key": "term-5-transistor-control/session-07-not-gate",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: manba-e voltazh-e ghabel-e tanzim-e azmayeshgah.\n# har gam-e slider 0.1 volt ast; duty * 3.3 / 1023 = tenths / 10 volt.\nfrom machine import Pin, ADC, PWM\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nsupply = PWM(Pin(14), freq=1000)\n\ntenths = round(knob.read() * 33 / 4095)\nsupply.duty(tenths * 31)\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 33,
+        "initial": 0,
+        "label": "ولتاژ منبع (ضرب‌در ۰٫۱ ولت)"
+      },
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "ورودی A"
+      },
+      {
+        "type": "analog",
+        "pin": 33,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "ورودی B"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 14,
+          "net": "vs"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 33
+        },
+        {
+          "id": "INA",
+          "pin": 32,
+          "analogMax": 1
+        },
+        {
+          "id": "INB",
+          "pin": 33,
+          "analogMax": 1
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "resistor",
+          "id": "RB1",
+          "a": "vs",
+          "b": "b1",
+          "ohms": 10000
+        },
+        {
+          "kind": "resistor",
+          "id": "RC1",
+          "a": "3V3",
+          "b": "not",
+          "ohms": 1000
+        },
+        {
+          "kind": "npn",
+          "id": "Q1",
+          "c": "not",
+          "base": "b1",
+          "e": "GND"
+        },
+        {
+          "kind": "resistor",
+          "id": "RB4",
+          "a": "not",
+          "b": "b4",
+          "ohms": 10000
+        },
+        {
+          "kind": "resistor",
+          "id": "RC4",
+          "a": "3V3",
+          "b": "buf",
+          "ohms": 1000
+        },
+        {
+          "kind": "npn",
+          "id": "Q4",
+          "c": "buf",
+          "base": "b4",
+          "e": "GND"
+        },
+        {
+          "kind": "pot",
+          "id": "INA",
+          "a": "3V3",
+          "wiper": "ia",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "pot",
+          "id": "INB",
+          "a": "3V3",
+          "wiper": "ib",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "resistor",
+          "id": "RB2",
+          "a": "ia",
+          "b": "b2",
+          "ohms": 10000
+        },
+        {
+          "kind": "resistor",
+          "id": "RB3",
+          "a": "ib",
+          "b": "b3",
+          "ohms": 10000
+        },
+        {
+          "kind": "resistor",
+          "id": "RC2",
+          "a": "3V3",
+          "b": "nor",
+          "ohms": 1000
+        },
+        {
+          "kind": "npn",
+          "id": "Q2",
+          "c": "nor",
+          "base": "b2",
+          "e": "GND"
+        },
+        {
+          "kind": "npn",
+          "id": "Q3",
+          "c": "nor",
+          "base": "b3",
+          "e": "GND"
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "v0",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 3.068,
+        "v:buf": 0.075,
+        "v:nor": 3.3
+      }
+    },
+    {
+      "name": "v3",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 3
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 3.068,
+        "v:buf": 0.075,
+        "v:nor": 3.3
+      }
+    },
+    {
+      "name": "v5",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 5
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 3.068,
+        "v:buf": 0.075,
+        "v:nor": 3.3
+      }
+    },
+    {
+      "name": "v6",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 6
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 3.058,
+        "v:buf": 0.075,
+        "v:nor": 3.3
+      }
+    },
+    {
+      "name": "v7",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 7
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 2.856,
+        "v:buf": 0.078,
+        "v:nor": 3.3
+      }
+    },
+    {
+      "name": "v8",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 8
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 2.261,
+        "v:buf": 0.087,
+        "v:nor": 3.3
+      }
+    },
+    {
+      "name": "v9",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 9
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 1.507,
+        "v:buf": 0.112,
+        "v:nor": 3.3
+      }
+    },
+    {
+      "name": "v10",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 10
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 0.689,
+        "v:buf": 3.115,
+        "v:nor": 3.3
+      }
+    },
+    {
+      "name": "v15",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 15
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 0.112,
+        "v:buf": 3.3,
+        "v:nor": 3.3
+      }
+    },
+    {
+      "name": "v33",
+      "sliders": {
+        "32": 0,
+        "33": 0,
+        "34": 33
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 0.073,
+        "v:buf": 3.3,
+        "v:nor": 3.3
+      }
+    },
+    {
+      "name": "nor10",
+      "sliders": {
+        "32": 1,
+        "33": 0,
+        "34": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 3.068,
+        "v:buf": 0.075,
+        "v:nor": 0.073
+      }
+    },
+    {
+      "name": "nor01",
+      "sliders": {
+        "32": 0,
+        "33": 1,
+        "34": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 3.068,
+        "v:buf": 0.075,
+        "v:nor": 0.073
+      }
+    },
+    {
+      "name": "nor11",
+      "sliders": {
+        "32": 1,
+        "33": 1,
+        "34": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:not": 3.068,
+        "v:buf": 0.075,
+        "v:nor": 0.056
+      }
+    }
+  ]
+}

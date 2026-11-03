@@ -1,0 +1,332 @@
+{
+  "key": "term-2-circuit-analysis/session-09-level-meter-project",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: manba-e voltazh-e ghabel-e tanzim-e azmayeshgah.\n# har gam-e slider 0.1 volt ast; duty * 3.3 / 1023 = tenths / 10 volt.\nfrom machine import Pin, ADC, PWM\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nsupply = PWM(Pin(14), freq=1000)\n\ntenths = round(knob.read() * 33 / 4095)\nsupply.duty(tenths * 31)\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 33,
+        "initial": 24,
+        "label": "ولتاژ ورودی (ضرب‌در ۰٫۱ ولت)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 200,
+        "initial": 100,
+        "label": "R5 (ضرب‌در ۱۰ اهم)"
+      },
+      {
+        "type": "analog",
+        "pin": 33,
+        "sensor": "pot",
+        "analogMax": 200,
+        "initial": 56,
+        "label": "R7 (ضرب‌در ۱۰ اهم)"
+      },
+      {
+        "type": "led",
+        "pin": 99,
+        "color": "green",
+        "label": "LED1"
+      },
+      {
+        "type": "led",
+        "pin": 98,
+        "color": "yellow",
+        "label": "LED2"
+      },
+      {
+        "type": "led",
+        "pin": 97,
+        "color": "red",
+        "label": "LED3"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 14,
+          "net": "vs"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 33
+        },
+        {
+          "id": "R5",
+          "pin": 35,
+          "analogMax": 200
+        },
+        {
+          "id": "R7",
+          "pin": 33,
+          "analogMax": 200
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "vs",
+          "b": "a1",
+          "ohms": 470
+        },
+        {
+          "kind": "led",
+          "id": "LED1",
+          "anode": "a1",
+          "cathode": "GND",
+          "pin": 99
+        },
+        {
+          "kind": "resistor",
+          "id": "R4",
+          "a": "vs",
+          "b": "t2",
+          "ohms": 220
+        },
+        {
+          "kind": "pot",
+          "id": "R5",
+          "a": "nc1",
+          "wiper": "GND",
+          "b": "t2",
+          "rtotal": 2000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "t2",
+          "b": "a2",
+          "ohms": 220
+        },
+        {
+          "kind": "led",
+          "id": "LED2",
+          "anode": "a2",
+          "cathode": "GND",
+          "pin": 98
+        },
+        {
+          "kind": "resistor",
+          "id": "R6",
+          "a": "vs",
+          "b": "t3",
+          "ohms": 220
+        },
+        {
+          "kind": "pot",
+          "id": "R7",
+          "a": "nc2",
+          "wiper": "GND",
+          "b": "t3",
+          "rtotal": 2000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "R3",
+          "a": "t3",
+          "b": "a3",
+          "ohms": 220
+        },
+        {
+          "kind": "led",
+          "id": "LED3",
+          "anode": "a3",
+          "cathode": "GND",
+          "pin": 97
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "v24",
+      "sliders": {
+        "33": 56,
+        "34": 24,
+        "35": 100
+      },
+      "bench": true,
+      "expect": {
+        "i:LED1": 0.001048,
+        "i:LED2": 0.000308,
+        "i:LED3": 0.000025,
+        "v:t2": 1.912,
+        "v:a1": 1.907
+      }
+    },
+    {
+      "name": "v28",
+      "sliders": {
+        "33": 56,
+        "34": 28,
+        "35": 100
+      },
+      "bench": true,
+      "expect": {
+        "i:LED1": 0.001838,
+        "i:LED2": 0.000978,
+        "i:LED3": 0.000403,
+        "v:t2": 2.119
+      }
+    },
+    {
+      "name": "v30",
+      "sliders": {
+        "33": 56,
+        "34": 30,
+        "35": 100
+      },
+      "bench": true,
+      "expect": {
+        "i:LED1": 0.002241,
+        "i:LED2": 0.001346,
+        "i:LED3": 0.000706
+      }
+    },
+    {
+      "name": "v32",
+      "sliders": {
+        "33": 56,
+        "34": 32,
+        "35": 100
+      },
+      "bench": true,
+      "expect": {
+        "i:LED1": 0.002648,
+        "i:LED2": 0.001723,
+        "i:LED3": 0.001034
+      }
+    },
+    {
+      "name": "v33",
+      "sliders": {
+        "33": 56,
+        "34": 33,
+        "35": 100
+      },
+      "bench": true,
+      "expect": {
+        "i:LED1": 0.002853,
+        "i:LED2": 0.001915,
+        "i:LED3": 0.001203,
+        "i:S14": 0.012222
+      }
+    },
+    {
+      "name": "v20",
+      "sliders": {
+        "33": 56,
+        "34": 20,
+        "35": 100
+      },
+      "bench": true,
+      "expect": {
+        "i:LED1": 0.000326,
+        "i:LED2": 0.000006,
+        "i:LED3": 0
+      }
+    },
+    {
+      "name": "r5 22",
+      "sliders": {
+        "33": 56,
+        "34": 33,
+        "35": 22
+      },
+      "bench": true,
+      "expect": {
+        "i:LED2": 0.000007,
+        "v:t2": 1.649,
+        "i:S14": 0.015451
+      }
+    },
+    {
+      "name": "tol hi",
+      "sliders": {
+        "33": 56,
+        "34": 28,
+        "35": 110
+      },
+      "bench": true,
+      "expect": {
+        "i:LED2": 0.001055
+      }
+    },
+    {
+      "name": "tol lo",
+      "sliders": {
+        "33": 56,
+        "34": 28,
+        "35": 90
+      },
+      "bench": true,
+      "expect": {
+        "i:LED2": 0.000886
+      }
+    },
+    {
+      "name": "bench tol hi 3.3",
+      "sliders": {
+        "33": 56,
+        "34": 33,
+        "35": 110
+      },
+      "bench": true,
+      "expect": {
+        "i:LED2": 0.002006
+      }
+    },
+    {
+      "name": "bench tol lo 3.3",
+      "sliders": {
+        "33": 56,
+        "34": 33,
+        "35": 90
+      },
+      "bench": true,
+      "expect": {
+        "i:LED2": 0.001805
+      }
+    },
+    {
+      "name": "ex680",
+      "sliders": {
+        "33": 56,
+        "34": 30,
+        "35": 68
+      },
+      "bench": true,
+      "expect": {
+        "i:LED2": 0.000944
+      }
+    }
+  ]
+}

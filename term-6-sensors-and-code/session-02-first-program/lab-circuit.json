@@ -1,0 +1,49 @@
+{
+  "key": "term-6-sensors-and-code/session-02-first-program",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# blink.py\n# LED rooye GPIO 25: yek sanie roshan, yek sanie khamoosh.\nfrom machine import Pin\nimport time\n\nled = Pin(25, Pin.OUT)\n\nwhile True:\n    led.on()\n    time.sleep(1)\n    led.off()\n    time.sleep(1)\n",
+    "parts": [
+      {
+        "type": "led",
+        "pin": 25,
+        "color": "red",
+        "resistorOhms": 220,
+        "label": "LED"
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "name": "no program, pin low",
+      "noProgram": true,
+      "expect": {
+        "v:g25": 0,
+        "i:LED25": 0
+      }
+    }
+  ],
+  "programScenarios": [
+    {
+      "name": "blink",
+      "ms": 4500,
+      "max": {
+        "v:g25": 3.3,
+        "i:LED25": 0.00592
+      },
+      "min": {
+        "v:g25": 0
+      },
+      "period": {
+        "v:g25": 2.0
+      }
+    },
+    {
+      "name": "typo",
+      "file": "blink_broken.py",
+      "ms": 500,
+      "error": "NameError"
+    }
+  ]
+}

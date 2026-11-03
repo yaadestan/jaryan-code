@@ -1,0 +1,69 @@
+{
+  "key": "term-1-closed-loop/session-03-voltage-levels",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "code": "# jaryan: barname-ye khali -- faghat saat-e shabih-saz ra jolo mibarad.\n# dar in fasl kod nemi-nevisim; madar khodash hal mishavad.\nimport time\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 1000,
+        "label": "R1",
+        "link": "R1"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 1000,
+        "label": "R2",
+        "link": "R2"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 1000,
+        "label": "R3",
+        "link": "R3"
+      }
+    ],
+    "analog": {
+      "components": [
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "3V3",
+          "b": "a",
+          "ohms": 1000
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "a",
+          "b": "b",
+          "ohms": 1000
+        },
+        {
+          "kind": "resistor",
+          "id": "R3",
+          "a": "b",
+          "b": "GND",
+          "ohms": 1000
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "ladder",
+      "sliders": {},
+      "expect": {
+        "v:3V3": 3.3,
+        "v:a": 2.2,
+        "v:b": 1.1,
+        "i:R1": 0.0011,
+        "i:R2": 0.0011,
+        "i:R3": 0.0011
+      }
+    }
+  ]
+}

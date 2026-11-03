@@ -1,0 +1,305 @@
+{
+  "key": "term-3-time-and-storage/session-04-square-wave-filter",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: moj-e morabba-ye kond. slider nim-dore ra migooyad.\n# bad az chand dore barname tamam mishavad ta adad-e multimeter sabet bemanad.\nfrom machine import Pin, ADC\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nend = ADC(Pin(35))\nend.atten(ADC.ATTN_11DB)\ndrive = Pin(14, Pin.OUT)\n\nhalf = max(1, round(knob.read() * 100 / 4095)) * 0.01\ncycles = max(3, int(1.5 / (2 * half)) + 1)\n\nfor i in range(cycles):\n    drive.value(1)\n    time.sleep(half)\n    drive.value(0)\n    time.sleep(half)\n\nif end.read() > 2000:\n    drive.value(1)\n    time.sleep(half)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 20,
+        "label": "نیم‌دوره (ضرب‌در ۰٫۰۱ ثانیه)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "پایان روی (۰ لبهٔ پایین، ۱ لبهٔ بالا)"
+      },
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "میان‌بر روی R1 (۰ نیست، ۱ هست)"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 20000,
+        "label": "R1",
+        "link": "R1"
+      },
+      {
+        "type": "passive",
+        "passive": "capacitor",
+        "label": "C1 = ۱۰µF",
+        "link": "C1"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 14,
+          "net": "drive"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        },
+        {
+          "pin": 35,
+          "net": "endsel"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 100
+        },
+        {
+          "id": "END",
+          "pin": 35,
+          "analogMax": 1
+        },
+        {
+          "id": "SW1",
+          "pin": 32,
+          "analogMax": 1
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "pot",
+          "id": "END",
+          "a": "3V3",
+          "wiper": "endsel",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "drive",
+          "b": "out",
+          "ohms": 20000
+        },
+        {
+          "kind": "pot",
+          "id": "SW1",
+          "a": "drive",
+          "wiper": "out",
+          "b": "nc1",
+          "rtotal": 100000000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "capacitor",
+          "id": "C1",
+          "a": "out",
+          "b": "GND",
+          "farads": 0.00001,
+          "v0": 0
+        }
+      ]
+    }
+  },
+  "scenarios": [],
+  "trace": [
+    {
+      "name": "h100 e0",
+      "sliders": {
+        "32": 0,
+        "34": 100,
+        "35": 0
+      },
+      "expect": {
+        "v:out": 0.025
+      }
+    },
+    {
+      "name": "h100 e1",
+      "sliders": {
+        "32": 0,
+        "34": 100,
+        "35": 1
+      },
+      "expect": {
+        "v:out": 3.275
+      }
+    },
+    {
+      "name": "h40 e0",
+      "sliders": {
+        "32": 0,
+        "34": 40,
+        "35": 0
+      },
+      "expect": {
+        "v:out": 0.41
+      }
+    },
+    {
+      "name": "h40 e1",
+      "sliders": {
+        "32": 0,
+        "34": 40,
+        "35": 1
+      },
+      "expect": {
+        "v:out": 2.89
+      }
+    },
+    {
+      "name": "h20 e0",
+      "sliders": {
+        "32": 0,
+        "34": 20,
+        "35": 0
+      },
+      "expect": {
+        "v:out": 0.903
+      }
+    },
+    {
+      "name": "h20 e1",
+      "sliders": {
+        "32": 0,
+        "34": 20,
+        "35": 1
+      },
+      "expect": {
+        "v:out": 2.397
+      }
+    },
+    {
+      "name": "h10 e0",
+      "sliders": {
+        "32": 0,
+        "34": 10,
+        "35": 0
+      },
+      "expect": {
+        "v:out": 1.255
+      }
+    },
+    {
+      "name": "h10 e1",
+      "sliders": {
+        "32": 0,
+        "34": 10,
+        "35": 1
+      },
+      "expect": {
+        "v:out": 2.045
+      }
+    },
+    {
+      "name": "h5 e0",
+      "sliders": {
+        "32": 0,
+        "34": 5,
+        "35": 0
+      },
+      "expect": {
+        "v:out": 1.449
+      }
+    },
+    {
+      "name": "h5 e1",
+      "sliders": {
+        "32": 0,
+        "34": 5,
+        "35": 1
+      },
+      "expect": {
+        "v:out": 1.85
+      }
+    },
+    {
+      "name": "h3 e0",
+      "sliders": {
+        "32": 0,
+        "34": 3,
+        "35": 0
+      },
+      "expect": {
+        "v:out": 1.529
+      }
+    },
+    {
+      "name": "h3 e1",
+      "sliders": {
+        "32": 0,
+        "34": 3,
+        "35": 1
+      },
+      "expect": {
+        "v:out": 1.77
+      }
+    },
+    {
+      "name": "h2 e0",
+      "sliders": {
+        "32": 0,
+        "34": 2,
+        "35": 0
+      },
+      "expect": {
+        "v:out": 1.569
+      }
+    },
+    {
+      "name": "h2 e1",
+      "sliders": {
+        "32": 0,
+        "34": 2,
+        "35": 1
+      },
+      "expect": {
+        "v:out": 1.73
+      }
+    },
+    {
+      "name": "bypass h20 e1",
+      "sliders": {
+        "32": 1,
+        "34": 20,
+        "35": 1
+      },
+      "expect": {
+        "v:out": 3.3
+      }
+    },
+    {
+      "name": "bypass h20 e0",
+      "sliders": {
+        "32": 1,
+        "34": 20,
+        "35": 0
+      },
+      "expect": {
+        "v:out": 0
+      }
+    }
+  ]
+}

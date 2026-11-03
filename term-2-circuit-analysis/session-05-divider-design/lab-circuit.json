@@ -1,0 +1,236 @@
+{
+  "key": "term-2-circuit-analysis/session-05-divider-design",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: barname-ye khali -- faghat saat-e shabih-saz ra jolo mibarad.\n# dar in fasl kod nemi-nevisim; madar khodash hal mishavad.\nimport time\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 15,
+        "label": "R1 (ضرب‌در ۱۰۰ اهم)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 18,
+        "label": "R2 (ضرب‌در ۱۰۰ اهم)"
+      },
+      {
+        "type": "analog",
+        "pin": 33,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 50,
+        "label": "پتانسیومتر RP (درصد)"
+      }
+    ],
+    "analog": {
+      "pots": [
+        {
+          "id": "R1",
+          "pin": 34,
+          "analogMax": 100
+        },
+        {
+          "id": "R2",
+          "pin": 35,
+          "analogMax": 100
+        },
+        {
+          "id": "RP",
+          "pin": 33,
+          "analogMax": 100
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "R1",
+          "a": "nc1",
+          "wiper": "out",
+          "b": "3V3",
+          "rtotal": 10000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "pot",
+          "id": "R2",
+          "a": "nc2",
+          "wiper": "GND",
+          "b": "out",
+          "rtotal": 10000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "pot",
+          "id": "RP",
+          "a": "3V3",
+          "wiper": "w",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.5
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "15 18",
+      "sliders": {
+        "34": 15,
+        "35": 18
+      },
+      "expect": {
+        "v:out": 1.8,
+        "i:R1": 0.001
+      }
+    },
+    {
+      "name": "50 60",
+      "sliders": {
+        "34": 50,
+        "35": 60
+      },
+      "expect": {
+        "v:out": 1.8,
+        "i:R1": 0.0003
+      }
+    },
+    {
+      "name": "10 10",
+      "sliders": {
+        "34": 10,
+        "35": 10
+      },
+      "expect": {
+        "v:out": 1.65,
+        "i:R1": 0.00165
+      }
+    },
+    {
+      "name": "23 10",
+      "sliders": {
+        "34": 23,
+        "35": 10
+      },
+      "expect": {
+        "v:out": 1,
+        "i:R1": 0.001
+      }
+    },
+    {
+      "name": "8 25",
+      "sliders": {
+        "34": 8,
+        "35": 25
+      },
+      "expect": {
+        "v:out": 2.5,
+        "i:R1": 0.001
+      }
+    },
+    {
+      "name": "13 20",
+      "sliders": {
+        "34": 13,
+        "35": 20
+      },
+      "expect": {
+        "v:out": 2
+      }
+    },
+    {
+      "name": "20 13",
+      "sliders": {
+        "34": 20,
+        "35": 13
+      },
+      "expect": {
+        "v:out": 1.3
+      }
+    },
+    {
+      "name": "56 10",
+      "sliders": {
+        "34": 56,
+        "35": 10
+      },
+      "expect": {
+        "v:out": 0.5
+      }
+    },
+    {
+      "name": "r2 0",
+      "sliders": {
+        "34": 15,
+        "35": 0
+      },
+      "expect": {
+        "v:out": 0,
+        "i:R1": 0.0022
+      }
+    },
+    {
+      "name": "r1 0",
+      "sliders": {
+        "34": 0,
+        "35": 18
+      },
+      "expect": {
+        "v:out": 3.3
+      }
+    },
+    {
+      "name": "8 27 from ch8",
+      "sliders": {
+        "34": 8,
+        "35": 27
+      },
+      "expect": {
+        "v:out": 2.546
+      }
+    },
+    {
+      "name": "pot 30",
+      "sliders": {
+        "33": 30
+      },
+      "expect": {
+        "v:w": 0.99
+      }
+    },
+    {
+      "name": "pot 100",
+      "sliders": {
+        "33": 100
+      },
+      "expect": {
+        "v:w": 3.3
+      }
+    },
+    {
+      "name": "pot 0",
+      "sliders": {
+        "33": 0
+      },
+      "expect": {
+        "v:w": 0
+      }
+    },
+    {
+      "name": "pot 50",
+      "sliders": {
+        "33": 50
+      },
+      "expect": {
+        "v:w": 1.65
+      }
+    }
+  ]
+}

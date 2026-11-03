@@ -1,0 +1,221 @@
+{
+  "key": "term-3-time-and-storage/session-01-capacitor-bucket",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: manba-e voltazh va zaman-e andazegiri az slider; bad barname tamam mishavad.\nfrom machine import Pin, ADC, PWM\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nclock = ADC(Pin(35))\nclock.atten(ADC.ATTN_11DB)\nsupply = PWM(Pin(14), freq=1000)\n\ntenths = round(knob.read() * 33 / 4095)\nsteps = round(clock.read() * 300 / 4095)\nsupply.duty(tenths * 31)\ntime.sleep(steps * 0.01)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 33,
+        "initial": 33,
+        "label": "ولتاژ منبع (ضرب‌در ۰٫۱ ولت)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 300,
+        "initial": 300,
+        "label": "زمان اندازه‌گیری (ضرب‌در ۰٫۰۱ ثانیه)"
+      },
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "اتصال کوتاه روی C1 (۰ نیست، ۱ هست)"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 20000,
+        "label": "R1",
+        "link": "R1"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 20000,
+        "label": "R2",
+        "link": "R2"
+      },
+      {
+        "type": "passive",
+        "passive": "capacitor",
+        "label": "C1 = ۱۰µF",
+        "link": "C1"
+      },
+      {
+        "type": "passive",
+        "passive": "capacitor",
+        "label": "C2 = ۲۰µF",
+        "link": "C2"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 14,
+          "net": "vs"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        },
+        {
+          "pin": 35,
+          "net": "clock"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 33
+        },
+        {
+          "id": "CLK",
+          "pin": 35,
+          "analogMax": 300
+        },
+        {
+          "id": "SW1",
+          "pin": 32,
+          "analogMax": 1
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "pot",
+          "id": "CLK",
+          "a": "3V3",
+          "wiper": "clock",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "vs",
+          "b": "c1",
+          "ohms": 20000
+        },
+        {
+          "kind": "capacitor",
+          "id": "C1",
+          "a": "c1",
+          "b": "GND",
+          "farads": 0.00001,
+          "v0": 0
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "vs",
+          "b": "c2",
+          "ohms": 20000
+        },
+        {
+          "kind": "capacitor",
+          "id": "C2",
+          "a": "c2",
+          "b": "GND",
+          "farads": 0.00002,
+          "v0": 0
+        },
+        {
+          "kind": "pot",
+          "id": "SW1",
+          "a": "c1",
+          "wiper": "GND",
+          "b": "nc1",
+          "rtotal": 100000000,
+          "wiperPos": 1
+        }
+      ]
+    }
+  },
+  "scenarios": [],
+  "trace": [
+    {
+      "name": "v33 3s",
+      "sliders": {
+        "32": 0,
+        "34": 33,
+        "35": 300
+      },
+      "expect": {
+        "v:c1": 3.299,
+        "v:c2": 3.298,
+        "i:R1": 0
+      }
+    },
+    {
+      "name": "v20 3s",
+      "sliders": {
+        "32": 0,
+        "34": 20,
+        "35": 300
+      },
+      "expect": {
+        "v:c1": 2,
+        "v:c2": 1.999
+      }
+    },
+    {
+      "name": "v10 3s",
+      "sliders": {
+        "32": 0,
+        "34": 10,
+        "35": 300
+      },
+      "expect": {
+        "v:c1": 1,
+        "v:c2": 0.999
+      }
+    },
+    {
+      "name": "v33 10ms",
+      "sliders": {
+        "32": 0,
+        "34": 33,
+        "35": 1
+      },
+      "expect": {
+        "v:c1": 0.157,
+        "v:c2": 0.081,
+        "i:R1": 0.000157,
+        "i:R2": 0.000161
+      }
+    },
+    {
+      "name": "short 3s",
+      "sliders": {
+        "32": 1,
+        "34": 33,
+        "35": 300
+      },
+      "expect": {
+        "v:c1": 0.016,
+        "v:c2": 3.298,
+        "i:R1": 0.000164
+      }
+    }
+  ]
+}

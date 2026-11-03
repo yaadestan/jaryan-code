@@ -1,0 +1,255 @@
+{
+  "key": "term-3-time-and-storage/session-06-inductor-opposes",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: slider zaman-e andazegiri ra migooyad; bad az an barname tamam mishavad\n# ta adad-e multimeter sabet bemanad.\nfrom machine import Pin, ADC\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nsteps = round(knob.read() * 300 / 4095)\ntime.sleep(steps * 0.01)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 300,
+        "initial": 20,
+        "label": "زمان اندازه‌گیری (ضرب‌در ۰٫۰۱ ثانیه)"
+      },
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 0,
+        "label": "میان‌بر روی R3 (۰ نیست، ۱ هست)"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 20000,
+        "label": "R1",
+        "link": "R1"
+      },
+      {
+        "type": "passive",
+        "passive": "capacitor",
+        "label": "C1 = ۱۰µF",
+        "link": "C1"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 90,
+        "label": "R3",
+        "link": "R3"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 10,
+        "label": "R2",
+        "link": "R2"
+      },
+      {
+        "type": "passive",
+        "passive": "inductor",
+        "label": "L1 = ۲۰H",
+        "link": "L1"
+      }
+    ],
+    "analog": {
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 300
+        },
+        {
+          "id": "SW1",
+          "pin": 32,
+          "analogMax": 1
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "3V3",
+          "b": "cap",
+          "ohms": 20000
+        },
+        {
+          "kind": "capacitor",
+          "id": "C1",
+          "a": "cap",
+          "b": "GND",
+          "farads": 0.00001,
+          "v0": 0
+        },
+        {
+          "kind": "resistor",
+          "id": "R3",
+          "a": "3V3",
+          "b": "x",
+          "ohms": 90
+        },
+        {
+          "kind": "pot",
+          "id": "SW1",
+          "a": "3V3",
+          "wiper": "x",
+          "b": "nc1",
+          "rtotal": 100000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "x",
+          "b": "l",
+          "ohms": 10
+        },
+        {
+          "kind": "inductor",
+          "id": "L1",
+          "a": "l",
+          "b": "GND",
+          "henries": 20,
+          "i0": 0
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "one tau",
+      "sliders": {
+        "32": 0,
+        "34": 20
+      },
+      "expect": {
+        "v:cap": 2.056,
+        "i:L1": 0.0206
+      }
+    }
+  ],
+  "trace": [
+    {
+      "name": "t10",
+      "sliders": {
+        "32": 0,
+        "34": 10
+      },
+      "expect": {
+        "v:cap": 1.274,
+        "i:L1": 0.012746
+      }
+    },
+    {
+      "name": "t20",
+      "sliders": {
+        "32": 0,
+        "34": 20
+      },
+      "expect": {
+        "v:cap": 2.056,
+        "i:L1": 0.020572
+      }
+    },
+    {
+      "name": "t40",
+      "sliders": {
+        "32": 0,
+        "34": 40
+      },
+      "expect": {
+        "v:cap": 2.831,
+        "i:L1": 0.028329
+      }
+    },
+    {
+      "name": "t60",
+      "sliders": {
+        "32": 0,
+        "34": 60
+      },
+      "expect": {
+        "v:cap": 3.123,
+        "i:L1": 0.031255
+      }
+    },
+    {
+      "name": "t100",
+      "sliders": {
+        "32": 0,
+        "34": 100
+      },
+      "expect": {
+        "v:cap": 3.275,
+        "i:L1": 0.032775
+      }
+    },
+    {
+      "name": "t150",
+      "sliders": {
+        "32": 0,
+        "34": 150
+      },
+      "expect": {}
+    },
+    {
+      "name": "t300",
+      "sliders": {
+        "32": 0,
+        "34": 300
+      },
+      "expect": {
+        "v:cap": 3.3,
+        "i:L1": 0.033027
+      }
+    },
+    {
+      "name": "bypass t20",
+      "sliders": {
+        "32": 1,
+        "34": 20
+      },
+      "expect": {
+        "i:L1": 0.031318
+      }
+    },
+    {
+      "name": "bypass t100",
+      "sliders": {
+        "32": 1,
+        "34": 100
+      },
+      "expect": {
+        "i:L1": 0.1293
+      }
+    },
+    {
+      "name": "bypass t300",
+      "sliders": {
+        "32": 1,
+        "34": 300
+      },
+      "expect": {
+        "i:L1": 0.25464
+      }
+    }
+  ]
+}

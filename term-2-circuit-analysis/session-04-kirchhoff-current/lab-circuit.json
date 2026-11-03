@@ -1,0 +1,219 @@
+{
+  "key": "term-2-circuit-analysis/session-04-kirchhoff-current",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: manba-e voltazh-e ghabel-e tanzim-e azmayeshgah.\n# har gam-e slider 0.1 volt ast; duty * 3.3 / 1023 = tenths / 10 volt.\nfrom machine import Pin, ADC, PWM\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nsupply = PWM(Pin(14), freq=1000)\n\ntenths = round(knob.read() * 33 / 4095)\nsupply.duty(tenths * 31)\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 33,
+        "initial": 0,
+        "label": "ولتاژ منبع دوم (ضرب‌در ۰٫۱ ولت)"
+      },
+      {
+        "type": "analog",
+        "pin": 32,
+        "sensor": "pot",
+        "analogMax": 1,
+        "initial": 1,
+        "label": "کلید R3 (۱ بسته، ۰ باز)"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 1000,
+        "label": "R1",
+        "link": "R1"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 1000,
+        "label": "R2",
+        "link": "R2"
+      },
+      {
+        "type": "passive",
+        "passive": "resistor",
+        "resistorOhms": 1000,
+        "label": "R3",
+        "link": "R3"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 14,
+          "net": "vs"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 33
+        },
+        {
+          "id": "SW1",
+          "pin": 32,
+          "analogMax": 1
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "3V3",
+          "b": "m",
+          "ohms": 1000
+        },
+        {
+          "kind": "resistor",
+          "id": "R2",
+          "a": "vs",
+          "b": "m",
+          "ohms": 1000
+        },
+        {
+          "kind": "pot",
+          "id": "SW1",
+          "a": "m",
+          "wiper": "y",
+          "b": "nc1",
+          "rtotal": 1000000,
+          "wiperPos": 1
+        },
+        {
+          "kind": "resistor",
+          "id": "R3",
+          "a": "y",
+          "b": "GND",
+          "ohms": 1000
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "v0",
+      "sliders": {
+        "32": 1,
+        "34": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:m": 1.1,
+        "i:R1": 0.0022,
+        "i:R2": -0.0011,
+        "i:R3": 0.0011
+      }
+    },
+    {
+      "name": "v33",
+      "sliders": {
+        "32": 1,
+        "34": 33
+      },
+      "bench": true,
+      "expect": {
+        "v:m": 2.2,
+        "i:R1": 0.0011,
+        "i:R2": 0.0011,
+        "i:R3": 0.0022
+      }
+    },
+    {
+      "name": "v11",
+      "sliders": {
+        "32": 1,
+        "34": 11
+      },
+      "bench": true,
+      "expect": {
+        "v:m": 1.467,
+        "i:R1": 0.001833,
+        "i:R2": -0.000367,
+        "i:R3": 0.001466
+      }
+    },
+    {
+      "name": "v22",
+      "sliders": {
+        "32": 1,
+        "34": 22
+      },
+      "bench": true,
+      "expect": {
+        "v:m": 1.833,
+        "i:R1": 0.001467,
+        "i:R2": 0.000367,
+        "i:R3": 0.001833
+      }
+    },
+    {
+      "name": "open v0",
+      "sliders": {
+        "32": 0,
+        "34": 0
+      },
+      "bench": true,
+      "expect": {
+        "v:m": 1.65,
+        "i:R1": 0.00165,
+        "i:R2": -0.00165
+      }
+    },
+    {
+      "name": "v6",
+      "sliders": {
+        "32": 1,
+        "34": 6
+      },
+      "bench": true,
+      "expect": {
+        "v:m": 1.3,
+        "i:R2": -0.0007
+      }
+    },
+    {
+      "name": "v16",
+      "sliders": {
+        "32": 1,
+        "34": 16
+      },
+      "bench": true,
+      "expect": {
+        "i:R2": -0.000033
+      }
+    },
+    {
+      "name": "v17",
+      "sliders": {
+        "32": 1,
+        "34": 17
+      },
+      "bench": true,
+      "expect": {
+        "i:R2": 0.000033
+      }
+    }
+  ]
+}

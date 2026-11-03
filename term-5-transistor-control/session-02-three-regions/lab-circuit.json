@@ -1,0 +1,242 @@
+{
+  "key": "term-5-transistor-control/session-02-three-regions",
+  "config": {
+    "board": "esp32-devkit-v1",
+    "rerunOnInput": true,
+    "code": "# jaryan: manba-e voltazh-e ghabel-e tanzim-e azmayeshgah.\n# har gam-e slider 0.1 volt ast; duty * 3.3 / 1023 = tenths / 10 volt.\nfrom machine import Pin, ADC, PWM\nimport time\n\nknob = ADC(Pin(34))\nknob.atten(ADC.ATTN_11DB)\nsupply = PWM(Pin(14), freq=1000)\n\ntenths = round(knob.read() * 33 / 4095)\nsupply.duty(tenths * 31)\n\nwhile True:\n    time.sleep(0.2)\n",
+    "parts": [
+      {
+        "type": "analog",
+        "pin": 34,
+        "sensor": "pot",
+        "analogMax": 33,
+        "initial": 33,
+        "label": "ولتاژ منبع (ضرب‌در ۰٫۱ ولت)"
+      },
+      {
+        "type": "analog",
+        "pin": 35,
+        "sensor": "pot",
+        "analogMax": 100,
+        "initial": 50,
+        "label": "مقاومت base (ضرب‌در ۱۰ کیلواهم)"
+      }
+    ],
+    "analog": {
+      "sources": [
+        {
+          "pin": 14,
+          "net": "vs"
+        }
+      ],
+      "reads": [
+        {
+          "pin": 34,
+          "net": "knob"
+        }
+      ],
+      "pots": [
+        {
+          "id": "KNOB",
+          "pin": 34,
+          "analogMax": 33
+        },
+        {
+          "id": "RB",
+          "pin": 35,
+          "analogMax": 100
+        }
+      ],
+      "components": [
+        {
+          "kind": "pot",
+          "id": "KNOB",
+          "a": "3V3",
+          "wiper": "knob",
+          "b": "GND",
+          "rtotal": 10000,
+          "wiperPos": 0.3
+        },
+        {
+          "kind": "pot",
+          "id": "RB",
+          "a": "nc",
+          "wiper": "b",
+          "b": "vs",
+          "rtotal": 1000000,
+          "wiperPos": 0.5
+        },
+        {
+          "kind": "resistor",
+          "id": "R1",
+          "a": "3V3",
+          "b": "c",
+          "ohms": 1000
+        },
+        {
+          "kind": "npn",
+          "id": "Q1",
+          "c": "c",
+          "base": "b",
+          "e": "GND"
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "in0",
+      "sliders": {
+        "34": 0,
+        "35": 50
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0,
+        "v:c": 3.3,
+        "i:RB": 0,
+        "i:R1": 0
+      }
+    },
+    {
+      "name": "in0.5",
+      "sliders": {
+        "34": 5,
+        "35": 50
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.499,
+        "v:c": 3.3,
+        "i:RB": 0,
+        "i:R1": 0
+      }
+    },
+    {
+      "name": "r100",
+      "sliders": {
+        "34": 33,
+        "35": 100
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.68,
+        "v:c": 3.038,
+        "i:RB": 0.000003,
+        "i:R1": 0.000262
+      }
+    },
+    {
+      "name": "r50",
+      "sliders": {
+        "34": 33,
+        "35": 50
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.697,
+        "v:c": 2.779,
+        "i:RB": 0.000005,
+        "i:R1": 0.000521
+      }
+    },
+    {
+      "name": "r20",
+      "sliders": {
+        "34": 33,
+        "35": 20
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.721,
+        "v:c": 2.01,
+        "i:RB": 0.000013,
+        "i:R1": 0.00129
+      }
+    },
+    {
+      "name": "r12",
+      "sliders": {
+        "34": 33,
+        "35": 12
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.734,
+        "v:c": 1.162,
+        "i:RB": 0.000021,
+        "i:R1": 0.002138
+      }
+    },
+    {
+      "name": "r10",
+      "sliders": {
+        "34": 33,
+        "35": 10
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.739,
+        "v:c": 0.739,
+        "i:RB": 0.000026,
+        "i:R1": 0.002561
+      }
+    },
+    {
+      "name": "r8",
+      "sliders": {
+        "34": 33,
+        "35": 8
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.744,
+        "v:c": 0.208,
+        "i:RB": 0.000032,
+        "i:R1": 0.003092
+      }
+    },
+    {
+      "name": "r5",
+      "sliders": {
+        "34": 33,
+        "35": 5
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.744,
+        "v:c": 0.132,
+        "i:RB": 0.000051,
+        "i:R1": 0.003168
+      }
+    },
+    {
+      "name": "r2",
+      "sliders": {
+        "34": 33,
+        "35": 2
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.746,
+        "v:c": 0.093,
+        "i:RB": 0.000128,
+        "i:R1": 0.003207
+      }
+    },
+    {
+      "name": "r1",
+      "sliders": {
+        "34": 33,
+        "35": 1
+      },
+      "bench": true,
+      "expect": {
+        "v:b": 0.748,
+        "v:c": 0.073,
+        "i:RB": 0.000255,
+        "i:R1": 0.003227
+      }
+    }
+  ]
+}
